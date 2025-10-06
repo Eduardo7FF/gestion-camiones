@@ -1,12 +1,20 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, signal, HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrls: ['./app.scss']
 })
 export class App {
-  protected readonly title = signal('app-gestion');
+  showLogin = signal(false);
+  isScrolled = signal(false);
+
+  toggleLogin() {
+    this.showLogin.set(!this.showLogin());
+  }
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    this.isScrolled.set(window.scrollY > 100);
+  }
 }
