@@ -40,27 +40,13 @@
   </ul>
 </section>
 
-<!-- Sección Reportes -->
-<section id="reportes" class="section dark">
-  <h2>Reportes</h2>
-  <p>Aún no se ha publicado ningún reporte</p>
-</section>
-
 <!-- Sección Contacto -->
 <section id="contacto" class="section">
   <h2>Contacto</h2>
   <p>
     ¿Quieres más información sobre nuestro sistema de gestión de camiones?
-    Escríbenos a <strong>contacto@gestioncamiones.com</strong> o llena el
-    formulario.
+    Escríbenos a <strong>contacto@gestioncamiones.com</strong>
   </p>
-
-  <form class="contact-form">
-    <input type="text" placeholder="Nombre completo" required />
-    <input type="email" placeholder="Correo electrónico" required />
-    <textarea placeholder="Escribe tu mensaje aquí..." required></textarea>
-    <button type="submit">Enviar</button>
-  </form>
 </section>
 
 <!-- Footer -->
@@ -74,23 +60,29 @@
   </div>
 </footer>
 
-<!-- Modal del login -->
+<!-- Modal Login -->
 <div class="overlay-login" [class.active]="showLogin()">
   <div class="login-box">
-    <!-- Botón cerrar -->
     <button class="close-btn" (click)="toggleLogin()">×</button>
-
     <h1>Bienvenido</h1>
     <p class="subtitle">Accede con tu cuenta</p>
 
-    <form>
-      <input type="email" placeholder="Correo electrónico" />
-      <input type="password" placeholder="Contraseña" />
-      <button type="submit">Ingresar</button>
+    <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+      <input
+        type="email"
+        name="correo"
+        [(ngModel)]="correo"
+        placeholder="Correo electrónico"
+        required
+      />
+      <input
+        type="password"
+        name="contrasena"
+        [(ngModel)]="contrasena"
+        placeholder="Contraseña"
+        required
+      />
+      <button type="submit" [disabled]="!loginForm.valid">Ingresar</button>
     </form>
-
-    <p class="register">
-      ¿No tienes cuenta? <a href="#">Crear una cuenta</a>
-    </p>
   </div>
 </div>

@@ -8,11 +8,11 @@ import { AuthModule } from './auth/auth.module';
       type: 'postgres',
       host: 'localhost',
       port: 5432,
-      username: 'postgres', 
-      password: 'admin123', 
+      username: 'postgres',
+      password: 'admin123',
       database: 'gestion_camiones',
       autoLoadEntities: true,
-      synchronize: true, // solo para desarrollo
+      synchronize: true, // ⚠️ solo en desarrollo
     }),
     AuthModule,
   ],
