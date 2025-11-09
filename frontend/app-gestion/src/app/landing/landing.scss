@@ -349,7 +349,7 @@ form {
   transition: all 0.2s ease;
 
   &:hover {
-    color: #25d366;
+    color: #075e54;
     transform: translateX(-2px);
   }
 }
@@ -371,7 +371,7 @@ form {
   &:hover {
     background: linear-gradient(135deg, #128c7e 0%, #25d366 100%);
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(37, 211, 102, 0.5);
+    
   }
 }
 
@@ -452,13 +452,13 @@ form {
   margin-top: 20px;
 
   a {
-    color: #25d366;
-    font-weight: 600;
+    color: #075e54;
+    font-weight: 500;
     text-decoration: none;
     transition: all 0.2s ease;
 
     &:hover {
-      color: #34B7F1;
+      color: #1876f276;
     }
   }
 }
