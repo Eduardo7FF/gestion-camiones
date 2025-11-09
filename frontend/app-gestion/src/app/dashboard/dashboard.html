@@ -4,10 +4,10 @@
       <div class="brand-text">Gestión de Camiones</div>
       <button class="burger" (click)="toggleMenu()">☰</button>
     </div>
+    
 
     <nav class="menu">
       <a (click)="setTab('inicio')" [class.active]="tab() === 'inicio'">
-        <!-- icon home -->
         <svg width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3l9 8h-3v9h-5v-6H11v6H6v-9H3z"/></svg>
         <span>Dashboard</span>
       </a>
@@ -43,7 +43,8 @@
     </div>
   </aside>
 
-  <main class="main">
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="main" [class.expanded]="!menuAbierto()">
     <header class="header">
       <h2 *ngIf="tab() === 'inicio'">Dashboard</h2>
       <h2 *ngIf="tab() === 'camiones'">Camiones</h2>
@@ -138,10 +139,9 @@
       </table>
     </section>
 
-    <!-- RUTAS (placeholder) -->
+    <!-- RUTAS -->
     <section *ngIf="tab() === 'rutas'" class="panel">
-    
-    <p>Aún no hay rutas definidas. (Aquí luego podrás crear/editar rutas y ver mapa)</p>
+      <p>Aún no hay rutas definidas. (Aquí luego podrás crear/editar rutas y ver mapa)</p>
     </section>
 
     <!-- ASIGNACIONES -->
@@ -162,146 +162,146 @@
 
     <!-- REPORTES -->
     <section *ngIf="tab() === 'reportes'" class="panel">
-  
-    <p>No hay reportes todavía.</p>
+      <p>No hay reportes todavía.</p>
     </section>
 
-<section *ngIf="tab() === 'config'" class="panel">
-  <div class="config-container">
-    <p class="config-subtitle">
-      Administra tu perfil, apariencia, seguridad y preferencias generales.
-    </p>
+    <!-- CONFIGURACIÓN -->
+    <section *ngIf="tab() === 'config'" class="panel">
+      <div class="config-container">
+        <p class="config-subtitle">
+          Administra tu perfil, apariencia, seguridad y preferencias generales.
+        </p>
 
-    <div class="settings-card">
-      <h3 class="section-heading">Perfil del Usuario</h3>
-      <div class="settings-grid">
-        <div class="settings-column">
-          <div class="form-group">
-            <label>ID de Usuario</label>
-            <input type="text" value="USR-00123" disabled />
+        <div class="settings-card">
+          <h3 class="section-heading">Perfil del Usuario</h3>
+          <div class="settings-grid">
+            <div class="settings-column">
+              <div class="form-group">
+                <label>ID de Usuario</label>
+                <input type="text" value="USR-00123" disabled />
+              </div>
+              <div class="form-group">
+                <label>Nombre Completo</label>
+                <input type="text" [(ngModel)]="usuarioNombre" />
+              </div>
+              <div class="form-group">
+                <label>Correo Electrónico</label>
+                <input type="email" value="usuario@empresa.com" />
+              </div>
+              <div class="form-group">
+                <label>Estado</label>
+                <input type="text" value="Activo" disabled />
+              </div>
+            </div>
+
+            <div class="settings-column">
+              <div class="form-group">
+                <label>Contraseña Actual</label>
+                <input type="password" placeholder="••••••••" />
+              </div>
+              <div class="form-group">
+                <label>Nueva Contraseña</label>
+                <input type="password" placeholder="Ingrese nueva contraseña" />
+              </div>
+              <div class="form-group">
+                <label>Confirmar Contraseña</label>
+                <input type="password" placeholder="Repita la contraseña" />
+              </div>
+            </div>
           </div>
-          <div class="form-group">
-            <label>Nombre Completo</label>
-            <input type="text" [(ngModel)]="usuarioNombre" />
-          </div>
-          <div class="form-group">
-            <label>Correo Electrónico</label>
-            <input type="email" value="usuario@empresa.com" />
-          </div>
-          <div class="form-group">
-            <label>Estado</label>
-            <input type="text" value="Activo" disabled />
+
+          <div class="settings-actions">
+            <button class="save-btn">Guardar Cambios</button>
+            <button class="cancel-btn">Cancelar</button>
           </div>
         </div>
 
-        <div class="settings-column">
-          <div class="form-group">
-            <label>Contraseña Actual</label>
-            <input type="password" placeholder="••••••••" />
+        <!-- Apariencia y Preferencias -->
+        <div class="settings-card">
+          <h3 class="section-heading">Preferencias y Apariencia</h3>
+          <div class="settings-extra">
+            <div class="form-group">
+              <label>Tema de la Interfaz</label>
+              <select>
+                <option>Claro</option>
+                <option>Oscuro</option>
+                <option>Automático</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Idioma</label>
+              <select>
+                <option>Español</option>
+                <option>Inglés</option>
+                <option>Francés</option>
+              </select>
+            </div>
           </div>
-          <div class="form-group">
-            <label>Nueva Contraseña</label>
-            <input type="password" placeholder="Ingrese nueva contraseña" />
+
+          <div class="notifications">
+            <h4>Notificaciones</h4>
+            <div class="toggle-row">
+              <span>Alertas del sistema</span>
+              <label class="switch">
+                <input type="checkbox" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <span>Reportes semanales</span>
+              <label class="switch">
+                <input type="checkbox" />
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <span>Asignaciones automáticas</span>
+              <label class="switch">
+                <input type="checkbox" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
           </div>
-          <div class="form-group">
-            <label>Confirmar Contraseña</label>
-            <input type="password" placeholder="Repita la contraseña" />
+        </div>
+
+        <!-- Seguridad -->
+        <div class="settings-card">
+          <h3 class="section-heading">Seguridad y Sesión</h3>
+          <div class="security-grid">
+            <div class="form-group">
+              <label>Autenticación en Dos Pasos (2FA)</label>
+              <div class="toggle-row">
+                <span>Habilitar verificación adicional</span>
+                <label class="switch">
+                  <input type="checkbox" />
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Actividad Reciente</label>
+              <p style="font-size: 0.9rem; color: #555;">Último inicio de sesión: <strong>05/11/2025 21:30</strong></p>
+              <p style="font-size: 0.9rem; color: #555;">Dispositivo: <strong>Windows 10 - Chrome</strong></p>
+            </div>
+          </div>
+          <div class="settings-actions">
+            <button class="save-btn">Cerrar todas las sesiones</button>
+          </div>
+        </div>
+
+        <!-- Almacenamiento -->
+        <div class="settings-card">
+          <h3 class="section-heading">Almacenamiento Local</h3>
+          <p style="color: #555;">Borra la información almacenada localmente en tu navegador.</p>
+          <div class="settings-actions">
+            <button class="cancel-btn" (click)="limpiarDatosLocales()">Limpiar Datos</button>
           </div>
         </div>
       </div>
-
-      <div class="settings-actions">
-        <button class="save-btn">Guardar Cambios</button>
-        <button class="cancel-btn">Cancelar</button>
-      </div>
-    </div>
-
-    <!-- Apariencia y Preferencias -->
-    <div class="settings-card">
-      <h3 class="section-heading">Preferencias y Apariencia</h3>
-      <div class="settings-extra">
-        <div class="form-group">
-          <label>Tema de la Interfaz</label>
-          <select>
-            <option>Claro</option>
-            <option>Oscuro</option>
-            <option>Automático</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Idioma</label>
-          <select>
-            <option>Español</option>
-            <option>Inglés</option>
-            <option>Francés</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="notifications">
-        <h4>Notificaciones</h4>
-        <div class="toggle-row">
-          <span>Alertas del sistema</span>
-          <label class="switch">
-            <input type="checkbox" checked />
-            <span class="slider"></span>
-          </label>
-        </div>
-        <div class="toggle-row">
-          <span>Reportes semanales</span>
-          <label class="switch">
-            <input type="checkbox" />
-            <span class="slider"></span>
-          </label>
-        </div>
-        <div class="toggle-row">
-          <span>Asignaciones automáticas</span>
-          <label class="switch">
-            <input type="checkbox" checked />
-            <span class="slider"></span>
-          </label>
-        </div>
-      </div>
-    </div>
-
-    <!-- Seguridad -->
-    <div class="settings-card">
-      <h3 class="section-heading">Seguridad y Sesión</h3>
-      <div class="security-grid">
-        <div class="form-group">
-          <label>Autenticación en Dos Pasos (2FA)</label>
-          <div class="toggle-row">
-            <span>Habilitar verificación adicional</span>
-            <label class="switch">
-              <input type="checkbox" />
-              <span class="slider"></span>
-            </label>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Actividad Reciente</label>
-          <p style="font-size: 0.9rem; color: #555;">Último inicio de sesión: <strong>05/11/2025 21:30</strong></p>
-          <p style="font-size: 0.9rem; color: #555;">Dispositivo: <strong>Windows 10 - Chrome</strong></p>
-        </div>
-      </div>
-      <div class="settings-actions">
-        <button class="save-btn">Cerrar todas las sesiones</button>
-      </div>
-    </div>
-
-    <!-- Almacenamiento -->
-    <div class="settings-card">
-      <h3 class="section-heading">Almacenamiento Local</h3>
-      <p style="color: #555;">Borra la información almacenada localmente en tu navegador.</p>
-      <div class="settings-actions">
-        <button class="cancel-btn" (click)="limpiarDatosLocales()">Limpiar Datos</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-
+    </section>
+  </main>
+</div>
 
 <!-- MODALES DE FORM -->
 <div class="modal" *ngIf="modalCamion">

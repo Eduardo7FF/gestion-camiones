@@ -1,88 +1,53 @@
-<!-- Barra de navegación -->
-<nav class="navbar">
-  <div class="logo">Gestión de Camiones</div>
+<div class="landing-container">
+  <div class="bg-shape shape1"></div>
+  <div class="bg-shape shape2"></div>
+  <div class="bg-shape shape3"></div>
+  <div class="bg-shape shape4"></div>
 
-  <div class="nav-links">
-    <a href="#inicio">Inicio</a>
-    <a href="#rutas">Rutas</a>
-    <a href="#reportes">Reportes</a>
-    <a href="#contacto">Contacto</a>
-  </div>
+  <div class="login-card">
+    <h2>Iniciar sesión</h2>
 
-  <button class="btn-login" (click)="toggleLogin()">Iniciar Sesión</button>
-</nav>
+    <form (ngSubmit)="onLogin()">
+      <div class="form-group">
+        <label for="correo">Correo electrónico</label>
+        <input
+          id="correo"
+          type="email"
+          [(ngModel)]="correo"
+          name="correo"
+          placeholder="usuario@gmail.com"
+          required
+        />
+      </div>
 
-<!-- Sección principal -->
-<div id="inicio" class="split-container">
-  <div class="right-panel">
-    <div class="overlay">
-      <h2>Optimiza tus rutas</h2>
-      <p>
-        Sistema inteligente de gestión de camiones para mejorar la recolección,
-        reducir costos y cuidar el entorno.
-      </p>
-    </div>
-  </div>
-</div>
+      <div class="form-group">
+        <label for="contrasena">Contraseña</label>
+        <input
+          id="contrasena"
+          type="password"
+          [(ngModel)]="contrasena"
+          name="contrasena"
+          placeholder="••••••••"
+          required
+        />
+      </div>
 
-<!-- Sección Rutas -->
-<section id="rutas" class="section">
-  <h2>Gestión de Rutas</h2>
-  <p>
-    Nuestro sistema permite planificar y optimizar rutas de recolección de
-    residuos en tiempo real. Con ayuda de algoritmos avanzados y mapas
-    interactivos, se asegura la eficiencia en cada recorrido.
-  </p>
-  <ul>
-    <li>Optimización automática de trayectos</li>
-    <li>Monitoreo en tiempo real de cada camión</li>
-    <li>Estadísticas de kilómetros recorridos y combustible</li>
-  </ul>
-</section>
+      <a href="#" class="forgot">¿Olvidaste tu contraseña?</a>
 
-<!-- Sección Contacto -->
-<section id="contacto" class="section">
-  <h2>Contacto</h2>
-  <p>
-    ¿Quieres más información sobre nuestro sistema de gestión de camiones?
-    Escríbenos a <strong>contacto@gestioncamiones.com</strong>
-  </p>
-</section>
-
-<!-- Footer -->
-<footer class="footer">
-  <p>© 2025 Gestión de Camiones. Todos los derechos reservados.</p>
-  <div class="footer-links">
-    <a href="#inicio">Inicio</a>
-    <a href="#rutas">Rutas</a>
-    <a href="#reportes">Reportes</a>
-    <a href="#contacto">Contacto</a>
-  </div>
-</footer>
-
-<!-- Modal Login -->
-<div class="overlay-login" [class.active]="showLogin()">
-  <div class="login-box">
-    <button class="close-btn" (click)="toggleLogin()">×</button>
-    <h1>Bienvenido</h1>
-    <p class="subtitle">Accede con tu cuenta</p>
-
-    <form (ngSubmit)="onLogin()" #loginForm="ngForm">
-      <input
-        type="email"
-        name="correo"
-        [(ngModel)]="correo"
-        placeholder="Correo electrónico"
-        required
-      />
-      <input
-        type="password"
-        name="contrasena"
-        [(ngModel)]="contrasena"
-        placeholder="Contraseña"
-        required
-      />
-      <button type="submit" [disabled]="!loginForm.valid">Ingresar</button>
+      <button type="submit" class="btn-login">Iniciar sesión</button>
     </form>
+
+    <div class="divider">o continúa con</div>
+
+    <div class="social-buttons">
+      <button class="social google"><i class="fa-brands fa-google"></i></button>
+      <button class="social github"><i class="fa-brands fa-github"></i></button>
+      <button class="social facebook"><i class="fa-brands fa-facebook-f"></i></button>
+    </div>
+
+    <p class="register-text">
+      ¿No tienes cuenta?
+      <a href="#">Regístrate gratis</a>
+    </p>
   </div>
 </div>
