@@ -17,9 +17,10 @@
   overflow: hidden;
   position: relative;
   font-family: 'Poppins', sans-serif;
+  padding: 20px;
 }
 
-// Formas 3D tipo "tubos" o "cuerdas"
+// Formas 3D de fondo
 .bg-shape {
   position: absolute;
   filter: blur(1px);
@@ -35,7 +36,6 @@
   }
 }
 
-// Forma 1: Tubo superior izquierdo (estilo "C")
 .shape1 {
   width: 180px;
   height: 180px;
@@ -44,9 +44,7 @@
   left: 100px;
   box-shadow: 
     -20px -20px 60px rgba(52, 183, 241, 0.4),
-    20px 20px 60px rgba(37, 211, 102, 0.4),
-    inset -10px -10px 30px rgba(52, 183, 241, 0.3),
-    inset 10px 10px 30px rgba(37, 211, 102, 0.3);
+    20px 20px 60px rgba(37, 211, 102, 0.4);
   animation: float1 15s infinite ease-in-out;
   
   &::before {
@@ -55,9 +53,6 @@
     background: linear-gradient(135deg, #25D366 0%, #34B7F1 100%);
     top: -80px;
     left: -60px;
-    box-shadow: 
-      -15px -15px 50px rgba(37, 211, 102, 0.5),
-      15px 15px 50px rgba(52, 183, 241, 0.5);
   }
   
   &::after {
@@ -66,24 +61,15 @@
     background: linear-gradient(135deg, #34B7F1 0%, #1a9e8e 100%);
     bottom: -70px;
     left: -40px;
-    box-shadow: 
-      -10px -10px 40px rgba(52, 183, 241, 0.4),
-      10px 10px 40px rgba(26, 158, 142, 0.4);
   }
 }
 
-// Forma 2: Tubo inferior izquierdo
 .shape2 {
   width: 200px;
   height: 200px;
   background: linear-gradient(135deg, #128C7E 0%, #25D366 100%);
   bottom: -80px;
   left: -60px;
-  box-shadow: 
-    -25px -25px 70px rgba(18, 140, 126, 0.5),
-    25px 25px 70px rgba(37, 211, 102, 0.5),
-    inset -12px -12px 35px rgba(18, 140, 126, 0.3),
-    inset 12px 12px 35px rgba(37, 211, 102, 0.3);
   animation: float2 18s infinite ease-in-out;
   
   &::before {
@@ -92,24 +78,15 @@
     background: linear-gradient(135deg, #25D366 0%, #34B7F1 100%);
     top: -90px;
     right: -80px;
-    box-shadow: 
-      -18px -18px 55px rgba(37, 211, 102, 0.6),
-      18px 18px 55px rgba(52, 183, 241, 0.6);
   }
 }
 
-// Forma 3: Tubo centro-izquierda (grande)
 .shape3 {
   width: 220px;
   height: 220px;
   background: linear-gradient(135deg, #34B7F1 0%, #128C7E 100%);
   top: 50%;
   left: 50px;
-  box-shadow: 
-    -30px -30px 80px rgba(52, 183, 241, 0.6),
-    30px 30px 80px rgba(18, 140, 126, 0.6),
-    inset -15px -15px 40px rgba(52, 183, 241, 0.4),
-    inset 15px 15px 40px rgba(18, 140, 126, 0.4);
   animation: float3 22s infinite ease-in-out;
   
   &::before {
@@ -118,9 +95,6 @@
     background: linear-gradient(135deg, #25D366 0%, #0d5e4d 100%);
     bottom: -100px;
     left: -70px;
-    box-shadow: 
-      -20px -20px 60px rgba(37, 211, 102, 0.7),
-      20px 20px 60px rgba(13, 94, 77, 0.7);
   }
   
   &::after {
@@ -129,24 +103,15 @@
     background: linear-gradient(135deg, #1a9e8e 0%, #34B7F1 100%);
     top: -80px;
     right: -60px;
-    box-shadow: 
-      -15px -15px 50px rgba(26, 158, 142, 0.5),
-      15px 15px 50px rgba(52, 183, 241, 0.5);
   }
 }
 
-// Forma 4: Tubo superior derecho
 .shape4 {
   width: 190px;
   height: 190px;
   background: linear-gradient(135deg, #075E54 0%, #25D366 100%);
   top: 80px;
   right: 150px;
-  box-shadow: 
-    -28px -28px 75px rgba(7, 94, 84, 0.5),
-    28px 28px 75px rgba(37, 211, 102, 0.5),
-    inset -14px -14px 38px rgba(7, 94, 84, 0.3),
-    inset 14px 14px 38px rgba(37, 211, 102, 0.3);
   animation: float4 16s infinite ease-in-out;
   
   &::before {
@@ -155,9 +120,6 @@
     background: linear-gradient(135deg, #34B7F1 0%, #128C7E 100%);
     top: -70px;
     right: -50px;
-    box-shadow: 
-      -16px -16px 52px rgba(52, 183, 241, 0.6),
-      16px 16px 52px rgba(18, 140, 126, 0.6);
   }
   
   &::after {
@@ -166,156 +128,130 @@
     background: linear-gradient(135deg, #25D366 0%, #075E54 100%);
     bottom: -65px;
     right: -45px;
-    box-shadow: 
-      -14px -14px 48px rgba(37, 211, 102, 0.5),
-      14px 14px 48px rgba(7, 94, 84, 0.5);
   }
 }
 
-// Forma adicional en la parte inferior derecha
-.landing-container::before {
-  content: '';
-  position: absolute;
-  width: 250px;
-  height: 250px;
-  background: linear-gradient(135deg, #128C7E 0%, #34B7F1 100%);
-  border-radius: 50%;
-  bottom: -100px;
-  right: -80px;
-  box-shadow: 
-    -35px -35px 85px rgba(18, 140, 126, 0.6),
-    35px 35px 85px rgba(52, 183, 241, 0.6),
-    inset -18px -18px 45px rgba(18, 140, 126, 0.4),
-    inset 18px 18px 45px rgba(52, 183, 241, 0.4);
-  animation: float 19s infinite ease-in-out;
-  opacity: 0.7;
-}
-
-// Forma adicional superior centro
-.landing-container::after {
-  content: '';
-  position: absolute;
-  width: 170px;
-  height: 170px;
-  background: linear-gradient(135deg, #25D366 0%, #0a4d3c 100%);
-  border-radius: 50%;
-  top: -60px;
-  right: 35%;
-  box-shadow: 
-    -22px -22px 65px rgba(37, 211, 102, 0.5),
-    22px 22px 65px rgba(10, 77, 60, 0.5),
-    inset -11px -11px 32px rgba(37, 211, 102, 0.3),
-    inset 11px 11px 32px rgba(10, 77, 60, 0.3);
-  animation: float2 17s infinite ease-in-out;
-  opacity: 0.7;
-}
-
-// Animaciones de flotación más orgánicas
 @keyframes float1 {
-  0%, 100% { 
-    transform: translate(0, 0) rotate(0deg) scale(1);
-  }
-  25% { 
-    transform: translate(20px, -30px) rotate(5deg) scale(1.05);
-  }
-  50% { 
-    transform: translate(-15px, -45px) rotate(-3deg) scale(1.08);
-  }
-  75% { 
-    transform: translate(25px, -20px) rotate(4deg) scale(1.03);
-  }
+  0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  25% { transform: translate(20px, -30px) rotate(5deg) scale(1.05); }
+  50% { transform: translate(-15px, -45px) rotate(-3deg) scale(1.08); }
+  75% { transform: translate(25px, -20px) rotate(4deg) scale(1.03); }
 }
 
 @keyframes float2 {
-  0%, 100% { 
-    transform: translate(0, 0) rotate(0deg) scale(1);
-  }
-  25% { 
-    transform: translate(-25px, 20px) rotate(-4deg) scale(1.06);
-  }
-  50% { 
-    transform: translate(20px, 35px) rotate(6deg) scale(1.04);
-  }
-  75% { 
-    transform: translate(-18px, 25px) rotate(-5deg) scale(1.07);
-  }
+  0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  25% { transform: translate(-25px, 20px) rotate(-4deg) scale(1.06); }
+  50% { transform: translate(20px, 35px) rotate(6deg) scale(1.04); }
+  75% { transform: translate(-18px, 25px) rotate(-5deg) scale(1.07); }
 }
 
 @keyframes float3 {
-  0%, 100% { 
-    transform: translate(0, 0) rotate(0deg) scale(1);
-  }
-  25% { 
-    transform: translate(30px, 25px) rotate(7deg) scale(1.04);
-  }
-  50% { 
-    transform: translate(-20px, 40px) rotate(-6deg) scale(1.08);
-  }
-  75% { 
-    transform: translate(22px, 18px) rotate(5deg) scale(1.05);
-  }
+  0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  25% { transform: translate(30px, 25px) rotate(7deg) scale(1.04); }
+  50% { transform: translate(-20px, 40px) rotate(-6deg) scale(1.08); }
+  75% { transform: translate(22px, 18px) rotate(5deg) scale(1.05); }
 }
 
 @keyframes float4 {
-  0%, 100% { 
-    transform: translate(0, 0) rotate(0deg) scale(1);
-  }
-  25% { 
-    transform: translate(-28px, -25px) rotate(-8deg) scale(1.07);
-  }
-  50% { 
-    transform: translate(25px, -38px) rotate(7deg) scale(1.05);
-  }
-  75% { 
-    transform: translate(-22px, -30px) rotate(-6deg) scale(1.06);
-  }
+  0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  25% { transform: translate(-28px, -25px) rotate(-8deg) scale(1.07); }
+  50% { transform: translate(25px, -38px) rotate(7deg) scale(1.05); }
+  75% { transform: translate(-22px, -30px) rotate(-6deg) scale(1.06); }
 }
 
 @keyframes float {
-  0%, 100% { 
-    transform: translate(0, 0) scale(1);
-  }
-  33% { 
-    transform: translate(20px, -25px) scale(1.05);
-  }
-  66% { 
-    transform: translate(-18px, 22px) scale(1.03);
-  }
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(20px, -25px) scale(1.05); }
+  66% { transform: translate(-18px, 22px) scale(1.03); }
 }
 
-// Card de login con glassmorphism premium
+// Card de login DIVIDIDO EN DOS COLUMNAS - MÁS COMPACTO
 .login-card {
-  width: 650px;
-  padding: 1.5rem 3.5rem;
-  border-radius: 28px;
-  background: rgba(255, 255, 255, 0.13);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  max-width: 950px;
+  width: 90%;
+  min-height: 520px;
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(35px) saturate(180%);
   box-shadow: 
-    0 15px 50px rgba(0, 0, 0, 0.3),
-    0 8px 25px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+    0 20px 60px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
-  text-align: center;
+  overflow: hidden;
   animation: fadeInUp 0.9s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 100;
   position: relative;
 }
 
-// Estilos del logo
-.logo-container {
+// LADO IZQUIERDO - Información y branding
+.left-side {
+  background: linear-gradient(135deg, rgba(7, 94, 84, 0.3) 0%, rgba(18, 140, 126, 0.2) 100%);
+  padding: 40px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   text-align: center;
-  margin-bottom: 1rem;
-  animation: logoFadeIn 1.2s ease-in-out;
+  color: white;
+  position: relative;
+}
+
+.logo-section {
+  margin-bottom: 30px;
 }
 
 .logo {
-  width: 120px;
-  height: 120px;
+  width: 300x;
+  height: 300px;
   filter: drop-shadow(0 8px 20px rgba(37, 211, 102, 0.4));
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+.tagline {
+  margin-top: 25px;
   
+  h3 {
+    font-size: 1.7rem;
+    font-weight: 900;
+    margin-bottom: 15px;
+    line-height: 1.2;
+    color: white;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  p {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.5;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+}
+
+.features {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 30px;
+  
+  .feature-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    
+    i {
+      font-size: 20px;
+      color: white;
+    }
+  }
 }
 
 @keyframes logoFadeIn {
@@ -343,40 +279,52 @@
   }
 }
 
+// LADO DERECHO - Formulario de login
+.right-side {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 40px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 h2 {
-  font-size: 1.8rem;
-  font-weight: 600;
-  margin-bottom: 1.8rem;
-  letter-spacing: -0.8px;
-  color: #ffffff;
+  font-size: 1.7rem;
+  font-weight: 900;
+  margin-bottom: 30px;
+  letter-spacing: -0.5px;
+  color: white;
+  text-align: center;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+form {
+  width: 100%;
 }
 
 .form-group {
   text-align: left;
-  margin-bottom: 0.8rem;
+  margin-bottom: 16px;
 
   label {
     display: block;
-    font-size: 0.85rem;
-    margin-bottom: 0.5rem;
-    color: #f8f9fa;
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+    color: white;
     font-weight: 500;
-    letter-spacing: 0.2px;
   }
 
   input {
     width: 100%;
-    padding: 0.9rem 1rem;
+    padding: 12px 16px;
     border: 1px solid rgba(255, 255, 255, 0.25);
     border-radius: 14px;
-    background: rgba(255, 255, 255, 0.97);
+    background: rgba(255, 255, 255, 0.95);
     outline: none;
     font-size: 0.95rem;
     color: #2c3e50;
     font-family: 'Poppins', sans-serif;
-    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 
     &::placeholder {
       color: #95a5a6;
@@ -384,9 +332,9 @@ h2 {
 
     &:focus {
       border: 2px solid #25d366;
-      background: rgba(255, 255, 255, 1);
+      background: white;
       transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(37, 211, 102, 0.35);
+      box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
     }
   }
 }
@@ -394,51 +342,44 @@ h2 {
 .forgot {
   display: block;
   text-align: right;
-  font-size: 0.87rem;
-  color: #ecf0f1;
+  font-size: 0.9rem;
+  color: white;
   text-decoration: none;
-  margin-bottom: 1.2rem;
-  font-weight: 400;
-  transition: all 0.25s ease;
+  margin-bottom: 25px;
+  transition: all 0.2s ease;
 
   &:hover {
     color: #25d366;
-    text-decoration: none;
     transform: translateX(-2px);
   }
 }
 
 .btn-login {
   width: 100%;
-  padding: 1rem;
-  background: linear-gradient(135deg, #075e54 0%, #0d6e5e 50%, #128c7e 100%);
+  padding: 12px;
+  background: linear-gradient(135deg, #075e54 0%, #128c7e 100%);
   border: none;
   border-radius: 14px;
   color: white;
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 5px 18px rgba(7, 94, 84, 0.45);
-  letter-spacing: 0.4px;
-  text-transform: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(7, 94, 84, 0.4);
+  margin-bottom: 20px;
 
   &:hover {
-    background: linear-gradient(135deg, #128c7e 0%, #1a9e8e 50%, #25d366 100%);
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.55);
-  }
-
-  &:active {
-    transform: translateY(-1px);
+    background: linear-gradient(135deg, #128c7e 0%, #25d366 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(37, 211, 102, 0.5);
   }
 }
 
 .divider {
-  margin: 1.5rem 0 1rem;
+  margin: 25px 0;
   font-size: 0.9rem;
-  color: #ecf0f1;
-  font-weight: 400;
+  color: white;
+  text-align: center;
   position: relative;
 
   &::before,
@@ -448,7 +389,7 @@ h2 {
     top: 50%;
     width: 38%;
     height: 1px;
-    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.35), transparent);
+    background: rgba(255, 255, 255, 0.3);
   }
 
   &::before {
@@ -463,28 +404,31 @@ h2 {
 .social-buttons {
   display: flex;
   justify-content: center;
-  gap: 1.1rem;
-  margin-bottom: 0.8rem;
+  gap: 15px;
+  margin-bottom: 25px;
 
   .social {
-    width: 52px;
-    height: 52px;
+    width: 56px;
+    height: 56px;
     border: none;
-    border-radius: 14px;
+    border-radius: 16px;
     cursor: pointer;
-    background: rgba(255, 255, 255, 0.97);
+    background: white;
     color: #128C7E;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.4rem;
-    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+    font-size: 24px;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+
+    i {
+      font-size: 24px;
+    }
 
     &:hover {
-      background: white;
       transform: translateY(-4px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
     }
 
     &.google:hover {
@@ -502,20 +446,19 @@ h2 {
 }
 
 .register-text {
-  font-size: 0.92rem;
-  color: #ecf0f1;
-  margin-top: 1.5rem;
-  font-weight: 400;
+  font-size: 0.95rem;
+  color: white;
+  text-align: center;
+  margin-top: 20px;
 
   a {
     color: #25d366;
     font-weight: 600;
     text-decoration: none;
-    transition: all 0.25s ease;
+    transition: all 0.2s ease;
 
     &:hover {
       color: #34B7F1;
-      text-decoration: none;
     }
   }
 }
@@ -523,7 +466,7 @@ h2 {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(40px) scale(0.94);
+    transform: translateY(40px) scale(0.96);
   }
   to {
     opacity: 1;
@@ -532,29 +475,38 @@ h2 {
 }
 
 // Responsive
-@media (max-width: 480px) {
+@media (max-width: 1024px) {
   .login-card {
-    width: 92%;
-    padding: 2.2rem 1.8rem;
+    grid-template-columns: 1fr;
+    max-width: 500px;
+  }
+
+  .left-side {
+    display: none;
+  }
+
+  .right-side {
+    padding: 40px 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .right-side {
+    padding: 30px 20px;
   }
 
   h2 {
     font-size: 1.6rem;
   }
 
-  .logo {
-    width: 100px;
-    height: 100px;
+  .btn-login {
+    padding: 12px;
+    font-size: 1rem;
   }
 
-  .bg-shape {
-    filter: blur(2px);
-    opacity: 0.6;
-  }
-  
-  .shape1, .shape2, .shape3, .shape4 {
-    &::before, &::after {
-      opacity: 0.5;
-    }
+  .social-buttons .social {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
   }
 }

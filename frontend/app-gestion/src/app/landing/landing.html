@@ -5,54 +5,83 @@
   <div class="bg-shape shape4"></div>
   
   <div class="login-card">
-    <!-- LOGO DENTRO DE LA CARD -->
-    <div class="logo-container">
-     <img src="logo.svg" alt="TruckFlow Logo" class="logo">
+    <!-- LADO IZQUIERDO - Branding e información -->
+    <div class="left-side">
+      <div class="logo-section">
+        <img src="logo.svg" alt="TruckFlow Logo" class="logo">
+  
+      </div>
+      
+      <div class="tagline">
+        <h3>Sistema Ambiental</h3>
+        <p>Optimiza rutas de recolección y contribuye a un futuro más sostenible</p>
+      </div>
+      
+      <div class="features">
+        <div class="feature-icon">
+          <i class="fas fa-leaf"></i>
+        </div>
+        <div class="feature-icon">
+          <i class="fas fa-recycle"></i>
+        </div>
+        <div class="feature-icon">
+          <i class="fas fa-globe"></i>
+        </div>
+      </div>
     </div>
     
-    <h2>Iniciar sesión</h2>
+    <!-- LADO DERECHO - Formulario de login -->
+    <div class="right-side">
+      <h2>Iniciar sesión</h2>
 
-    <form (ngSubmit)="onLogin()">
-      <div class="form-group">
-        <label for="correo">Correo electrónico</label>
-        <input
-          id="correo"
-          type="email"
-          [(ngModel)]="correo"
-          name="correo"
-          placeholder="usuario@gmail.com"
-          required
-        />
+      <form (ngSubmit)="onLogin()">
+        <div class="form-group">
+          <label for="correo">Correo electrónico</label>
+          <input
+            id="correo"
+            type="email"
+            [(ngModel)]="correo"
+            name="correo"
+            placeholder="usuario@gmail.com"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="contrasena">Contraseña</label>
+          <input
+            id="contrasena"
+            type="password"
+            [(ngModel)]="contrasena"
+            name="contrasena"
+            placeholder="••••••••"
+            required
+          />
+        </div>
+
+        <a href="#" class="forgot">¿Olvidaste tu contraseña?</a>
+
+        <button type="submit" class="btn-login">Iniciar sesión</button>
+      </form>
+
+      <div class="divider">o continúa con</div>
+
+      <div class="social-buttons">
+        <button class="social google">
+          <i class="fab fa-google"></i>
+        </button>
+        <button class="social github">
+          <i class="fab fa-github"></i>
+        </button>
+        <button class="social facebook">
+          <i class="fab fa-facebook-f"></i>
+        </button>
       </div>
 
-      <div class="form-group">
-        <label for="contrasena">Contraseña</label>
-        <input
-          id="contrasena"
-          type="password"
-          [(ngModel)]="contrasena"
-          name="contrasena"
-          placeholder="••••••••"
-          required
-        />
-      </div>
-
-      <a href="#" class="forgot">¿Olvidaste tu contraseña?</a>
-
-      <button type="submit" class="btn-login">Iniciar sesión</button>
-    </form>
-
-    <div class="divider">o continúa con</div>
-
-    <div class="social-buttons">
-      <button class="social google"><i class="fa-brands fa-google"></i></button>
-      <button class="social github"><i class="fa-brands fa-github"></i></button>
-      <button class="social facebook"><i class="fa-brands fa-facebook-f"></i></button>
+      <p class="register-text">
+        ¿No tienes cuenta?
+        <a href="#">Regístrate gratis</a>
+      </p>
     </div>
-
-    <p class="register-text">
-      ¿No tienes cuenta?
-      <a href="#">Regístrate gratis</a>
-    </p>
   </div>
 </div>
