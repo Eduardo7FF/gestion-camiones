@@ -1,0 +1,50 @@
+name: Deploy Angular App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Clonar el repositorio
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Configurar Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20' # Ajusta según tu proyecto
+
+      # Instalar dependencias
+      - name: Install dependencies
+        run: npm ci
+
+      # Construir Angular
+      - name: Build Angular
+        run: npm run build -- --configuration production --base_href /carlos_site/
+
+      # Configurar SSH
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.8.1
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+
+      # Subir archivos al servidor
+      - name: Deploy to server
+        run: |
+          echo "📤 Subiendo frontend al servidor..."
+          scp -o StrictHostKeyChecking=no -r app-gestion/dist/app-gestion/browser/* ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/tmp/eco_frontend/
+          ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} '
+            echo "🧹 Limpiando /var/www/carlos_site..."
+            rm -rf /var/www/carlos_site/*
+            ls -l /tmp/eco_frontend/
+            mv /tmp/eco_frontend/* /var/www/carlos_site/
+            chown -R www-data:www-data /var/www/carlos_site
+            schmod -R 755 /var/www/carl_site
+            systemctl restart apache2 || sudo systemctl restart nginx
+            echo "✅ Frontend desplegado correctamente."

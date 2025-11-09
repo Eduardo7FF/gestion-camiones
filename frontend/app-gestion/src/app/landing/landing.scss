@@ -19,13 +19,13 @@
   font-family: 'Poppins', sans-serif;
 }
 
-// Formas 3D 
+// Formas 3D tipo "tubos" o "cuerdas"
 .bg-shape {
   position: absolute;
   filter: blur(1px);
   opacity: 0.7;
   border-radius: 50%;
-  animation: float 40s infinite ease-in-out;
+  animation: float 20s infinite ease-in-out;
   
   &::before,
   &::after {
@@ -35,7 +35,7 @@
   }
 }
 
-// Forma 1: Tubo superior izquierdo 
+// Forma 1: Tubo superior izquierdo (estilo "C")
 .shape1 {
   width: 180px;
   height: 180px;
@@ -285,10 +285,10 @@
 
 // Card de login con glassmorphism premium
 .login-card {
-  width: 490px;
-  padding: 1.5rem 2.8rem;
+  width: 650px;
+  padding: 1.5rem 3.5rem;
   border-radius: 28px;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.13);
   backdrop-filter: blur(35px) saturate(180%);
   box-shadow: 
     0 15px 50px rgba(0, 0, 0, 0.3),
@@ -303,10 +303,50 @@
   position: relative;
 }
 
+// Estilos del logo
+.logo-container {
+  text-align: center;
+  margin-bottom: 1rem;
+  animation: logoFadeIn 1.2s ease-in-out;
+}
+
+.logo {
+  width: 120px;
+  height: 120px;
+  filter: drop-shadow(0 8px 20px rgba(37, 211, 102, 0.4));
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  
+}
+
+@keyframes logoFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.8);
+  }
+  60% {
+    transform: translateY(5px) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes logoPulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 8px 20px rgba(37, 211, 102, 0.4));
+  }
+  50% {
+    transform: scale(1.05);
+    filter: drop-shadow(0 12px 28px rgba(37, 211, 102, 0.6));
+  }
+}
+
 h2 {
-  font-size: 2.1rem;
+  font-size: 1.8rem;
   font-weight: 600;
-  margin-bottom: 2.2rem;
+  margin-bottom: 1.8rem;
   letter-spacing: -0.8px;
   color: #ffffff;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
@@ -314,12 +354,12 @@ h2 {
 
 .form-group {
   text-align: left;
-  margin-bottom: 1.4rem;
+  margin-bottom: 0.8rem;
 
   label {
     display: block;
-    font-size: 0.9rem;
-    margin-bottom: 0.6rem;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
     color: #f8f9fa;
     font-weight: 500;
     letter-spacing: 0.2px;
@@ -327,7 +367,7 @@ h2 {
 
   input {
     width: 100%;
-    padding: 1rem 1.1rem;
+    padding: 0.9rem 1rem;
     border: 1px solid rgba(255, 255, 255, 0.25);
     border-radius: 14px;
     background: rgba(255, 255, 255, 0.97);
@@ -357,7 +397,7 @@ h2 {
   font-size: 0.87rem;
   color: #ecf0f1;
   text-decoration: none;
-  margin-bottom: 1.6rem;
+  margin-bottom: 1.2rem;
   font-weight: 400;
   transition: all 0.25s ease;
 
@@ -395,7 +435,7 @@ h2 {
 }
 
 .divider {
-  margin: 2rem 0 1.5rem;
+  margin: 1.5rem 0 1rem;
   font-size: 0.9rem;
   color: #ecf0f1;
   font-weight: 400;
@@ -464,7 +504,7 @@ h2 {
 .register-text {
   font-size: 0.92rem;
   color: #ecf0f1;
-  margin-top: 2rem;
+  margin-top: 1.5rem;
   font-weight: 400;
 
   a {
@@ -499,7 +539,12 @@ h2 {
   }
 
   h2 {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
+  }
+
+  .logo {
+    width: 100px;
+    height: 100px;
   }
 
   .bg-shape {
