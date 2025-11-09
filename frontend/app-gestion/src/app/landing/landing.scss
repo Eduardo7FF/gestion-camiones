@@ -474,39 +474,75 @@ form {
   }
 }
 
-// Responsive
+// Responsive - MANTENER DOS COLUMNAS EN MÓVILES
 @media (max-width: 1024px) {
   .login-card {
-    grid-template-columns: 1fr;
-    max-width: 500px;
+    grid-template-columns: 1fr 1fr; // Mantener 2 columnas
+    max-width: 95%;
+    min-height: auto;
   }
 
   .left-side {
-    display: none;
+    padding: 20px 15px; // Menos espacio
+  }
+
+  .logo {
+    width: 80px; // Logo más pequeño
+    height: 80px;
+  }
+
+  .tagline h3 {
+    font-size: 1rem; // Texto más pequeño
+  }
+
+  .tagline p {
+    font-size: 0.75rem;
+  }
+
+  .features {
+    gap: 8px;
+    margin-top: 15px;
+    
+    .feature-icon {
+      width: 35px;
+      height: 35px;
+      
+      i {
+        font-size: 14px;
+      }
+    }
   }
 
   .right-side {
-    padding: 40px 30px;
-  }
-}
-
-@media (max-width: 480px) {
-  .right-side {
-    padding: 30px 20px;
+    padding: 20px 15px;
   }
 
   h2 {
-    font-size: 1.6rem;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 12px;
+
+    label {
+      font-size: 0.8rem;
+    }
+
+    input {
+      padding: 10px 12px;
+      font-size: 0.85rem;
+    }
   }
 
   .btn-login {
-    padding: 12px;
-    font-size: 1rem;
+    padding: 10px;
+    font-size: 0.9rem;
   }
 
   .social-buttons .social {
-    width: 48px;
-    height: 48px;
-    font-size: 20px;
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
   }
 }
