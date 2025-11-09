@@ -1,4 +1,4 @@
-import { Component, signal, HostListener } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgIf } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
@@ -13,32 +13,17 @@ import { AuthService } from '../auth.service';
   styleUrls: ['./landing.scss']
 })
 export class LandingComponent {
-  showLogin = signal(false);
-  isScrolled = signal(false);
   correo = '';
   contrasena = '';
 
   constructor(private auth: AuthService, private router: Router) {}
 
-  toggleLogin() {
-    this.showLogin.set(!this.showLogin());
-  }
-
-  @HostListener('window:scroll', [])
-  onWindowScroll() {
-    this.isScrolled.set(window.scrollY > 100);
-  }
-
   onLogin() {
     const datos = { correo: this.correo, contrasena: this.contrasena };
-
     this.auth.login(datos).subscribe({
       next: (res: any) => {
         localStorage.setItem('token', res.token);
         localStorage.setItem('usuario', JSON.stringify(res.usuario));
-
-        // ✅ Redirigir al dashboard
-        this.toggleLogin();
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
@@ -48,5 +33,3 @@ export class LandingComponent {
     });
   }
 }
-
-

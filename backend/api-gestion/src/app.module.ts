@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -12,9 +11,9 @@ import { AuthModule } from './auth/auth.module';
       password: 'admin123',
       database: 'gestion_camiones',
       autoLoadEntities: true,
-      synchronize: true, // ⚠️ solo en desarrollo
+      synchronize: true, 
     }),
-    AuthModule,
+   
   ],
 })
 export class AppModule {}
