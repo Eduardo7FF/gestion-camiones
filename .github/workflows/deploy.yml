@@ -45,8 +45,8 @@ jobs:
       - name: Deploy to server
         run: |
           echo "📤 Subiendo frontend al servidor..."
-          scp -o StrictHostKeyChecking=no -r frontend/app-gestion/dist/app-gestion/browser/* ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/tmp/eco_frontend/
-          ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} '
+          scp -o StrictHostKeyChecking=no -r frontend/app-gestion/dist/app-gestion/browser/* ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_SERVER }}:/tmp/eco_frontend/
+          ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_SERVER }} '
             echo "🧹 Limpiando /var/www/carlos_site..."
             rm -rf /var/www/carlos_site/*
             mv /tmp/eco_frontend/* /var/www/carlos_site/
