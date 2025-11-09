@@ -45,12 +45,10 @@ jobs:
       - name: Deploy to server
         run: |
           echo "📤 Subiendo frontend al servidor..."
-          scp -o StrictHostKeyChecking=no -r frontend/app-gestion/dist/app-gestion/browser/* ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_SERVER }}:/tmp/eco_frontend/
-          ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_SERVER }} '
-            echo "🧹 Limpiando /var/www/carlos_site..."
-            rm -rf /var/www/carlos_site/*
-            mv /tmp/eco_frontend/* /var/www/carlos_site/
-            chown -R www-data:www-data /var/www/carlos_site
-            chmod -R 755 /var/www/carlos_site
-            systemctl restart apache2 || sudo systemctl restart nginx
-            echo "✅ Frontend desplegado correctamente."
+          echo "🧹 Limpiando carpeta remota..."
+          ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_SERVER }} 'rm -rf /var/www/carlos_site/*'
+          
+          echo "📦 Copiando archivos nuevos..."
+          scp -o StrictHostKeyChecking=no -r frontend/app-gestion/dist/app-gestion/browser/* ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_SERVER }}:/var/www/carlos_site/
+          
+          echo "✅ Frontend desplegado correctamente en /var/www/carlos_site/"
