@@ -1,20 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgIf } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
+import { ToastService } from '../toast/toast.service';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [FormsModule, NgIf, HttpClientModule],
+  imports: [FormsModule, HttpClientModule],
   templateUrl: './landing.html',
   styleUrls: ['./landing.scss']
 })
 export class LandingComponent {
   correo = '';
   contrasena = '';
+  private toastService = inject(ToastService);
 
   constructor(private auth: AuthService, private router: Router) {}
 
@@ -24,17 +25,19 @@ export class LandingComponent {
     this.auth.login(datos).subscribe({
       next: (res: any) => {
         if (res.message === 'Login exitoso') {
-          // Guarda el usuario si el login fue correcto
+          this.toastService.showToast('¡Inicio de sesión exitoso!', 'success', 3500);
           localStorage.setItem('usuario', JSON.stringify(res.user));
-          // Redirige al dashboard
-          this.router.navigate(['/dashboard']);
+          
+          setTimeout(() => {
+            this.router.navigate(['/dashboard']);
+          }, 3800);
         } else {
-          alert('Correo o contraseña incorrectos');
+          this.toastService.showToast('Correo o contraseña incorrectos', 'error', 3000);
         }
       },
       error: (err) => {
         console.error('Error de login:', err);
-        alert('Ocurrió un error al iniciar sesión');
+        this.toastService.showToast('Ocurrió un error al iniciar sesión', 'error', 3000);
       }
     });
   }
