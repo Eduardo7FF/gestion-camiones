@@ -19,16 +19,22 @@ export class LandingComponent {
   constructor(private auth: AuthService, private router: Router) {}
 
   onLogin() {
-    const datos = { correo: this.correo, contrasena: this.contrasena };
+    const datos = { email: this.correo, password: this.contrasena };
+
     this.auth.login(datos).subscribe({
       next: (res: any) => {
-        localStorage.setItem('token', res.token);
-        localStorage.setItem('usuario', JSON.stringify(res.usuario));
-        this.router.navigate(['/dashboard']);
+        if (res.message === 'Login exitoso') {
+          // Guarda el usuario si el login fue correcto
+          localStorage.setItem('usuario', JSON.stringify(res.user));
+          // Redirige al dashboard
+          this.router.navigate(['/dashboard']);
+        } else {
+          alert('Correo o contraseña incorrectos');
+        }
       },
       error: (err) => {
         console.error('Error de login:', err);
-        alert('Correo o contraseña incorrectos');
+        alert('Ocurrió un error al iniciar sesión');
       }
     });
   }

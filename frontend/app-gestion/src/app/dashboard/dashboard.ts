@@ -40,13 +40,14 @@ export class DashboardComponent implements OnInit {
 
   constructor(private router: Router) {}
 
-  ngOnInit(): void {
-    const u = localStorage.getItem('usuario');
-    this.usuarioNombre = u ? JSON.parse(u).nombre || 'Usuario' : 'Usuario';
-    this.camiones = JSON.parse(localStorage.getItem('camiones') || '[]');
-    this.choferes = JSON.parse(localStorage.getItem('choferes') || '[]');
-    this.asignaciones = JSON.parse(localStorage.getItem('asignaciones') || '[]');
-  }
+ngOnInit(): void {
+  const u = localStorage.getItem('usuario');
+  this.usuarioNombre = u ? JSON.parse(u).name || JSON.parse(u).nombre || 'Usuario' : 'Usuario';
+  this.camiones = JSON.parse(localStorage.getItem('camiones') || '[]');
+  this.choferes = JSON.parse(localStorage.getItem('choferes') || '[]');
+  this.asignaciones = JSON.parse(localStorage.getItem('asignaciones') || '[]');
+}
+
 
   toggleMenu() { this.menuAbierto.set(!this.menuAbierto()); }
   setTab(t: any) { this.tab.set(t); }
