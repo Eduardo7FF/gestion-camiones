@@ -17,6 +17,7 @@ export class ToastService {
     const id = Date.now().toString();
     const toast: ToastMessage = { id, message, type, duration };
     
+    // Solo muestra un toast a la vez
     this.toasts.set([toast]);
 
     if (duration > 0) {

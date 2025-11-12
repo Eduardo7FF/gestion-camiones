@@ -1,103 +1,290 @@
 <div class="wrap">
+  <!-- Sidebar -->
   <aside class="sidebar" [class.closed]="!menuAbierto()">
     <div class="brand">
       <div class="brand-text">Gestión de Camiones</div>
       <button class="burger" (click)="toggleMenu()">☰</button>
     </div>
-    
 
     <nav class="menu">
       <a (click)="setTab('inicio')" [class.active]="tab() === 'inicio'">
-        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3l9 8h-3v9h-5v-6H11v6H6v-9H3z"/></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 12L9 18L21 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
         <span>Dashboard</span>
       </a>
-      <a (click)="setTab('camiones')" [class.active]="tab() === 'camiones'">
-        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M3 7h13v7H3zM20 8h1v6h-1zM16 3h4v5h-4zM5 17a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm12 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg>
-        <span>Camiones</span>
+      <a (click)="setTab('vehiculos')" [class.active]="tab() === 'vehiculos'">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 8H19C19.5304 8 20.0391 8.21071 20.4142 8.58579C20.7893 8.96086 21 9.46957 21 10V14C21 14.5304 20.7893 15.0391 20.4142 15.4142C20.0391 15.7893 19.5304 16 19 16H18M6 8H5C4.46957 8 3.96086 8.21071 3.58579 8.58579C3.21071 8.96086 3 9.46957 3 10V14C3 14.5304 3.21071 15.0391 3.58579 15.4142C3.96086 15.7893 4.46957 16 5 16H6M15 12H9M12 15V9M21 12V18C21 18.5304 20.7893 19.0391 20.4142 19.4142C20.0391 19.7893 19.5304 20 19 20H5C4.46957 20 3.96086 19.7893 3.58579 19.4142C3.21071 19.0391 3 18.5304 3 18V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Vehículos</span>
       </a>
-      <a (click)="setTab('choferes')" [class.active]="tab() === 'choferes'">
-        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 2c-4 0-7 2-7 4v2h14v-2c0-2-3-4-7-4z"/></svg>
-        <span>Choferes</span>
+      <a (click)="setTab('recorridos')" [class.active]="tab() === 'recorridos'">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M13 3L17.25 7.25L13 11.5M11 21L6.75 16.75L11 12.5M21 12H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Recorridos</span>
       </a>
       <a (click)="setTab('rutas')" [class.active]="tab() === 'rutas'">
-        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M3 3h18v2H3zM5 7h14v2H5zM7 11h10v2H7zM9 15h6v2H9z"/></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
         <span>Rutas</span>
       </a>
-      <a (click)="setTab('asignaciones')" [class.active]="tab() === 'asignaciones'">
-        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3l4 4h-3v6h-2V7H8zM4 13h16v8H4z" /></svg>
-        <span>Asignaciones</span>
+      <a (click)="setTab('calles')" [class.active]="tab() === 'calles'">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M13 19L20 12L13 5M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Calles</span>
       </a>
-      <a (click)="setTab('reportes')" [class.active]="tab() === 'reportes'">
-        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M3 13h4v-6H3v6zm6 0h4V7H9v6zm6 0h4V3h-4v10z"/></svg>
-        <span>Reportes</span>
-      </a>
-      <a (click)="setTab('config')" [class.active]="tab() === 'config'">
-        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM2 12a9.99 9.99 0 0 1 1.17-4.4l2.23.64A7 7 0 0 0 6 12c0 .7.1 1.38.3 2.02l-2.23.64A9.99 9.99 0 0 1 2 12z"/></svg>
-        <span>Configuración</span>
+      <a (click)="setTab('administracion')" [class.active]="tab() === 'administracion'">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-2.572 1.065c-.94 1.543-3.31.826-2.37 2.37a1.724 1.724 0 00-1.066 2.573c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.572-1.065c-1.543.94-3.31.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 002.572-1.065c.94-1.543 3.31-.826 2.37-2.37a1.724 1.724 0 001.065-2.572z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Admin</span>
       </a>
     </nav>
 
     <div class="sidebar-footer">
-      <div class="user">Hola, <strong>{{ usuarioNombre }}</strong></div>
-      <button class="logout" (click)="logout()">Cerrar sesión</button>
+      <div class="user">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Hola, <strong>{{ usuarioNombre }}</strong>
+      </div>
+      <button class="logout" (click)="logout()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h3.5a3 3 0 013 3v1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Cerrar sesión
+      </button>
     </div>
   </aside>
 
-  <!-- CONTENIDO PRINCIPAL -->
+  <!-- Main content -->
   <main class="main" [class.expanded]="!menuAbierto()">
+    <!-- Sistema de notificaciones -->
+    <div class="notificacion" *ngIf="notificacion()" [class]="'notificacion ' + notificacion()!.tipo">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path *ngIf="notificacion()!.tipo === 'success'" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path *ngIf="notificacion()!.tipo === 'error'" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path *ngIf="notificacion()!.tipo === 'info'" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      {{ notificacion()!.mensaje }}
+    </div>
+
+    <!-- Panel de clima -->
+    <div class="clima-panel">
+      <div class="clima-info">
+        <div class="clima-icon">
+          <svg *ngIf="clima.icono === 'sunny'" width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="sunny">
+            <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
+            <line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-width="2"/>
+            <line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-width="2"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-width="2"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-width="2"/>
+            <line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-width="2"/>
+            <line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-width="2"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-width="2"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <svg *ngIf="clima.icono === 'cloudy'" width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="cloudy">
+            <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <svg *ngIf="clima.icono === 'rainy'" width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="rainy">
+            <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="8" y1="19" x2="8" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="8" y1="13" x2="8" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="16" y1="19" x2="16" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="16" y1="13" x2="16" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="12" y1="15" x2="12" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <svg *ngIf="clima.icono === 'stormy'" width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="night">
+            <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <polygon points="13 11 17 17 11 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="clima-detalle">
+          <div class="temperatura">{{ clima.temperatura }}°C</div>
+          <div class="condicion">{{ clima.condicion | titlecase }}</div>
+        </div>
+      </div>
+      <div class="clima-stats">
+        <div class="stat-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2v2m0 16v2M4 12H2m20 0h-2m-4-8l-1.414 1.414M7.414 16.586L5.999 18m12.586-4.586l1.414-1.414M16.586 7.414l1.414-1.414M7.414 7.414L5.999 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Humedad: {{ clima.humedad }}%</span>
+        </div>
+        <div class="stat-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Viento: {{ clima.velocidadViento }} km/h</span>
+        </div>
+      </div>
+    </div>
+
     <header class="header">
-      <h2 *ngIf="tab() === 'inicio'">Dashboard</h2>
-      <h2 *ngIf="tab() === 'camiones'">Camiones</h2>
-      <h2 *ngIf="tab() === 'choferes'">Choferes</h2>
-      <h2 *ngIf="tab() === 'rutas'">Rutas</h2>
-      <h2 *ngIf="tab() === 'asignaciones'">Asignaciones</h2>
-      <h2 *ngIf="tab() === 'reportes'">Reportes</h2>
-      <h2 *ngIf="tab() === 'config'">Configuración</h2>
-      <div class="header-actions">
-        <button *ngIf="tab() === 'camiones'" (click)="modalCamion = true">Agregar camión</button>
-        <button *ngIf="tab() === 'choferes'" (click)="modalChofer = true">Agregar chofer</button>
-        <button *ngIf="tab() === 'asignaciones'" (click)="modalAsignacion = true">Asignar nuevo</button>
+      <h2 *ngIf="tab() === 'inicio'">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 12L9 18L21 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Dashboard
+      </h2>
+      <h2 *ngIf="tab() === 'vehiculos'">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 8H19C19.5304 8 20.0391 8.21071 20.4142 8.58579C20.7893 8.96086 21 9.46957 21 10V14C21 14.5304 20.7893 15.0391 20.4142 15.4142C20.0391 15.7893 19.5304 16 19 16H18M6 8H5C4.46957 8 3.96086 8.21071 3.58579 8.58579C3.21071 8.96086 3 9.46957 3 10V14C3 14.5304 3.21071 15.0391 3.58579 15.4142C3.96086 15.7893 4.46957 16 5 16H6M15 12H9M12 15V9M21 12V18C21 18.5304 20.7893 19.0391 20.4142 19.4142C20.0391 19.7893 19.5304 20 19 20H5C4.46957 20 3.96086 19.7893 3.58579 19.4142C3.21071 19.0391 3 18.5304 3 18V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Vehículos
+      </h2>
+      <h2 *ngIf="tab() === 'recorridos'">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M13 3L17.25 7.25L13 11.5M11 21L6.75 16.75L11 12.5M21 12H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Recorridos
+      </h2>
+      <h2 *ngIf="tab() === 'rutas'">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Rutas
+      </h2>
+      <h2 *ngIf="tab() === 'calles'">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M13 19L20 12L13 5M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Calles
+      </h2>
+      <h2 *ngIf="tab() === 'administracion'">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-2.572 1.065c-.94 1.543-3.31.826-2.37 2.37a1.724 1.724 0 00-1.066 2.573c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.572-1.065c-1.543.94-3.31.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 002.572-1.065c.94-1.543 3.31-.826 2.37-2.37a1.724 1.724 0 001.065-2.572z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Administración
+      </h2>
+      
+      <!-- Botón para crear nuevo elemento -->
+      <div class="header-actions" *ngIf="tab() === 'vehiculos'">
+        <button (click)="abrirModalCrearVehiculo()" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Nuevo Vehículo
+        </button>
+      </div>
+      <div class="header-actions" *ngIf="tab() === 'rutas'">
+        <button (click)="crearRutaConCallesPrimeras()" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Nueva Ruta (con calles)
+        </button>
       </div>
     </header>
 
-    <!-- INICIO: estadísticas resumen -->
+    <!-- INICIO: Dashboard con estadísticas -->
     <section *ngIf="tab() === 'inicio'" class="panel">
       <div class="stats">
-        <div class="stat"><h3>{{ camiones.length }}</h3><p>Camiones</p></div>
-        <div class="stat"><h3>{{ choferes.length }}</h3><p>Choferes</p></div>
-        <div class="stat"><h3>{{ asignaciones.length }}</h3><p>Rutas/Asignaciones</p></div>
+        <div class="stat">
+          <div class="stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 8H19C19.5304 8 20.0391 8.21071 20.4142 8.58579C20.7893 8.96086 21 9.46957 21 10V14C21 14.5304 20.7893 15.0391 20.4142 15.4142C20.0391 15.7893 19.5304 16 19 16H18M6 8H5C4.46957 8 3.96086 8.21071 3.58579 8.58579C3.21071 8.96086 3 9.46957 3 10V14C3 14.5304 3.21071 15.0391 3.58579 15.4142C3.96086 15.7893 4.46957 16 5 16H6M15 12H9M12 15V9M21 12V18C21 18.5304 20.7893 19.0391 20.4142 19.4142C20.0391 19.7893 19.5304 20 19 20H5C4.46957 20 3.96086 19.7893 3.58579 19.4142C3.21071 19.0391 3 18.5304 3 18V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>{{ vehiculos.length }}</h3>
+          <p>Vehículos</p>
+        </div>
+        <div class="stat">
+          <div class="stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M13 3L17.25 7.25L13 11.5M11 21L6.75 16.75L11 12.5M21 12H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>{{ recorridos.length }}</h3>
+          <p>Recorridos</p>
+        </div>
+        <div class="stat">
+          <div class="stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>{{ rutas.length }}</h3>
+          <p>Rutas/Asignaciones</p>
+        </div>
       </div>
 
       <div class="two-col">
+        <!-- Tabla Vehículos -->
         <div class="box">
-          <h3>Camiones</h3>
-          <p *ngIf="!camiones.length">Aún no hay camiones registrados.</p>
-          <table *ngIf="camiones.length">
-            <thead><tr><th>Placa</th><th>Modelo</th><th>Capacidad</th><th>Fecha registro</th><th></th></tr></thead>
+          <div class="box-header">
+            <h3>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 8H19C19.5304 8 20.0391 8.21071 20.4142 8.58579C20.7893 8.96086 21 9.46957 21 10V14C21 14.5304 20.7893 15.0391 20.4142 15.4142C20.0391 15.7893 19.5304 16 19 16H18M6 8H5C4.46957 8 3.96086 8.21071 3.58579 8.58579C3.21071 8.96086 3 9.46957 3 10V14C3 14.5304 3.21071 15.0391 3.58579 15.4142C3.96086 15.7893 4.46957 16 5 16H6M15 12H9M12 15V9M21 12V18C21 18.5304 20.7893 19.0391 20.4142 19.4142C20.0391 19.7893 19.5304 20 19 20H5C4.46957 20 3.96086 19.7893 3.58579 19.4142C3.21071 19.0391 3 18.5304 3 18V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Vehículos
+            </h3>
+          </div>
+          <p *ngIf="!vehiculos.length">Aún no hay vehículos registrados.</p>
+          <table *ngIf="vehiculos.length">
+            <thead>
+              <tr>
+                <th>Placa</th>
+                <th>Modelo</th>
+                <th>Marca</th>
+                <th>Fecha Registro</th>
+                <th></th>
+              </tr>
+            </thead>
             <tbody>
-              <tr *ngFor="let c of camiones; let i=index">
-                <td>{{ c.placa }}</td>
-                <td>{{ c.modelo }}</td>
-                <td>{{ c.capacidad }}</td>
-                <td>{{ c.fechaRegistro | date:'dd/MM/yyyy' }}</td>
-                <td><button (click)="borrarCamion(i)">Eliminar</button></td>
+              <tr *ngFor="let v of vehiculos.slice(0, 5)">
+                <td>{{ v.placa }}</td>
+                <td>{{ v.modelo || '-' }}</td>
+                <td>{{ v.marca || '-' }}</td>
+                <td>{{ v.created_at ? (v.created_at | date:'dd/MM/yyyy HH:mm') : 'N/A' }}</td>
+                <td><button (click)="eliminarVehiculo(v.id)" class="btn-danger">Eliminar</button></td>
               </tr>
             </tbody>
           </table>
         </div>
 
+        <!-- Tabla Recorridos -->
         <div class="box">
-          <h3>Choferes</h3>
-          <p *ngIf="!choferes.length">Aún no hay choferes.</p>
-          <table *ngIf="choferes.length">
-            <thead><tr><th>Nombre</th><th>Cédula</th><th>Teléfono</th><th>Ingreso</th><th></th></tr></thead>
+          <div class="box-header">
+            <h3>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M13 3L17.25 7.25L13 11.5M11 21L6.75 16.75L11 12.5M21 12H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Recorridos
+            </h3>
+          </div>
+          <p *ngIf="!recorridos.length">Aún no hay recorridos.</p>
+          <table *ngIf="recorridos.length">
+            <thead>
+              <tr>
+                <th>Ruta</th>
+                <th>Vehículo</th>
+                <th>Fecha</th>
+                <th></th>
+              </tr>
+            </thead>
             <tbody>
-              <tr *ngFor="let ch of choferes; let i=index">
-                <td>{{ ch.nombre }}</td>
-                <td>{{ ch.cedula }}</td>
-                <td>{{ ch.telefono }}</td>
-                <td>{{ ch.fechaIngreso | date:'dd/MM/yyyy' }}</td>
-                <td><button (click)="borrarChofer(i)">Eliminar</button></td>
+              <tr *ngFor="let r of recorridos.slice(0, 5)">
+                <td>{{ r.ruta_id.substring(0, 8) }}...</td>
+                <td>{{ r.vehiculo_id.substring(0, 8) }}...</td>
+                <td>{{ r.created_at ? (r.created_at | date:'dd/MM/yyyy HH:mm') : 'N/A' }}</td>
+                <td>
+                  <button (click)="finalizarRecorrido(r.id)" class="btn-warning">Finalizar</button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -105,248 +292,351 @@
       </div>
     </section>
 
-    <!-- CAMIONES -->
-    <section *ngIf="tab() === 'camiones'" class="panel">
-      <p *ngIf="!camiones.length">Aún no hay camiones. Usa "Agregar camión".</p>
-      <table *ngIf="camiones.length" class="full-table">
-        <thead><tr><th>Placa</th><th>Modelo</th><th>Capacidad</th><th>Fecha registro</th><th>Acción</th></tr></thead>
+    <!-- VEHÍCULOS -->
+    <section *ngIf="tab() === 'vehiculos'" class="panel">
+      <!-- Filtro de búsqueda -->
+      <div class="filtro-container">
+        <input 
+          type="text" 
+          class="filtro-input" 
+          placeholder="Buscar por placa, marca o modelo..." 
+          [value]="filtroVehiculos()"
+          (input)="filtroVehiculos.set($any($event.target).value)"
+        />
+        <span class="filtro-info">{{ vehiculosFiltrados().length }} resultados</span>
+      </div>
+
+      <p *ngIf="!vehiculosPaginados().length">No se encontraron vehículos.</p>
+      <table *ngIf="vehiculosPaginados().length" class="full-table">
+        <thead>
+          <tr>
+            <th>Placa</th>
+            <th>Modelo</th>
+            <th>Marca</th>
+            <th>Activo</th>
+            <th>Fecha Registro</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
         <tbody>
-          <tr *ngFor="let c of camiones; let i=index">
-            <td>{{ c.placa }}</td>
-            <td>{{ c.modelo }}</td>
-            <td>{{ c.capacidad }}</td>
-            <td>{{ c.fechaRegistro | date:'dd/MM/yyyy' }}</td>
-            <td><button (click)="borrarCamion(i)">Eliminar</button></td>
+          <tr *ngFor="let v of vehiculosPaginados()">
+            <td>{{ v.placa }}</td>
+            <td>{{ v.modelo || '-' }}</td>
+            <td>{{ v.marca || '-' }}</td>
+            <td>{{ v.activo ? 'Sí' : 'No' }}</td>
+            <td>{{ v.created_at ? (v.created_at | date:'dd/MM/yyyy HH:mm') : 'N/A' }}</td>
+            <td>
+              <div class="acciones-boton">
+                <button (click)="eliminarVehiculo(v.id)" class="btn-danger">Eliminar</button>
+              </div>
+            </td>
           </tr>
         </tbody>
       </table>
+
+      <!-- Paginación -->
+      <div class="paginacion" *ngIf="totalPaginasVehiculos() > 1">
+        <button (click)="cambiarPaginaVehiculos(-1)" [disabled]="paginaVehiculos() === 1" class="btn-pagination">
+          Anterior
+        </button>
+        <span>Página {{ paginaVehiculos() }} de {{ totalPaginasVehiculos() }}</span>
+        <button (click)="cambiarPaginaVehiculos(1)" [disabled]="paginaVehiculos() === totalPaginasVehiculos()" class="btn-pagination">
+          Siguiente
+        </button>
+      </div>
     </section>
 
-    <!-- CHOFERES -->
-    <section *ngIf="tab() === 'choferes'" class="panel">
-      <p *ngIf="!choferes.length">Aún no hay choferes. Usa "Agregar chofer".</p>
-      <table *ngIf="choferes.length" class="full-table">
-        <thead><tr><th>Nombre</th><th>Cédula</th><th>Teléfono</th><th>Ingreso</th><th>Acción</th></tr></thead>
+    <!-- RECORRIDOS -->
+    <section *ngIf="tab() === 'recorridos'" class="panel">
+      <!-- Filtro de búsqueda -->
+      <div class="filtro-container">
+        <input 
+          type="text" 
+          class="filtro-input" 
+          placeholder="Buscar por ID de recorrido, ruta o vehículo..." 
+          [value]="filtroRecorridos()"
+          (input)="filtroRecorridos.set($any($event.target).value)"
+        />
+        <span class="filtro-info">{{ recorridosFiltrados().length }} resultados</span>
+      </div>
+
+      <p *ngIf="!recorridosPaginados().length">No se encontraron recorridos.</p>
+      <table *ngIf="recorridosPaginados().length" class="full-table">
+        <thead>
+          <tr>
+            <th>ID Recorrido</th>
+            <th>Ruta ID</th>
+            <th>Vehículo ID</th>
+            <th>Fecha Inicio</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
         <tbody>
-          <tr *ngFor="let ch of choferes; let i=index">
-            <td>{{ ch.nombre }}</td>
-            <td>{{ ch.cedula }}</td>
-            <td>{{ ch.telefono }}</td>
-            <td>{{ ch.fechaIngreso | date:'dd/MM/yyyy' }}</td>
-            <td><button (click)="borrarChofer(i)">Eliminar</button></td>
+          <tr *ngFor="let r of recorridosPaginados()">
+            <td>{{ r.id.substring(0, 8) }}...</td>
+            <td>{{ r.ruta_id.substring(0, 8) }}...</td>
+            <td>{{ r.vehiculo_id.substring(0, 8) }}...</td>
+            <td>{{ r.created_at ? (r.created_at | date:'dd/MM/yyyy HH:mm') : 'N/A' }}</td>
+            <td>
+              <div class="acciones-boton">
+                <button (click)="verPosiciones(r.id)" class="btn-info">Ver Posiciones</button>
+                <button (click)="iniciarSeguimientoRecorrido(r.id)" class="btn-success">Seguimiento</button>
+                <button (click)="finalizarRecorrido(r.id)" class="btn-warning">Finalizar</button>
+              </div>
+            </td>
           </tr>
         </tbody>
       </table>
+
+      <!-- Paginación -->
+      <div class="paginacion" *ngIf="totalPaginasRecorridos() > 1">
+        <button (click)="cambiarPaginaRecorridos(-1)" [disabled]="paginaRecorridos() === 1" class="btn-pagination">
+          Anterior
+        </button>
+        <span>Página {{ paginaRecorridos() }} de {{ totalPaginasRecorridos() }}</span>
+        <button (click)="cambiarPaginaRecorridos(1)" [disabled]="paginaRecorridos() === totalPaginasRecorridos()" class="btn-pagination">
+          Siguiente
+        </button>
+      </div>
     </section>
 
     <!-- RUTAS -->
     <section *ngIf="tab() === 'rutas'" class="panel">
-      <p>Aún no hay rutas definidas. (Aquí luego podrás crear/editar rutas y ver mapa)</p>
-    </section>
+      <!-- Filtro de búsqueda -->
+      <div class="filtro-container">
+        <input 
+          type="text" 
+          class="filtro-input" 
+          placeholder="Buscar por nombre de ruta..." 
+          [value]="filtroRutas()"
+          (input)="filtroRutas.set($any($event.target).value)"
+        />
+        <span class="filtro-info">{{ rutasFiltradas().length }} resultados</span>
+      </div>
 
-    <!-- ASIGNACIONES -->
-    <section *ngIf="tab() === 'asignaciones'" class="panel">
-      <p *ngIf="!asignaciones.length">Aún no hay asignaciones.</p>
-      <table *ngIf="asignaciones.length" class="full-table">
-        <thead><tr><th>Camión</th><th>Chofer</th><th>Ruta</th><th>Fecha</th></tr></thead>
+      <p *ngIf="!rutasPaginadas().length">No se encontraron rutas.</p>
+      <table *ngIf="rutasPaginadas().length" class="full-table">
+        <thead>
+          <tr>
+            <th>Nombre Ruta</th>
+            <th>Color</th>
+            <th>Fecha Creación</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
         <tbody>
-          <tr *ngFor="let a of asignaciones">
-            <td>{{ a.camion }}</td>
-            <td>{{ a.chofer }}</td>
-            <td>{{ a.ruta }}</td>
-            <td>{{ a.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+          <tr *ngFor="let ruta of rutasPaginadas()">
+            <td>{{ ruta.nombre_ruta }}</td>
+            <td>
+              <span class="color-badge" [style.background-color]="ruta.color_hex || '#25D366'"></span>
+              {{ ruta.color_hex || '#25D366' }}
+            </td>
+            <td>{{ ruta.created_at ? (ruta.created_at | date:'dd/MM/yyyy HH:mm') : 'N/A' }}</td>
+            <td>
+              <div class="acciones-boton">
+                <button (click)="verDetalleRuta(ruta.id)" class="btn-info">Ver Detalle</button>
+                <button (click)="iniciarSeguimientoRuta(ruta.id)" class="btn-success">Seguimiento</button>
+              </div>
+            </td>
           </tr>
         </tbody>
       </table>
+
+      <!-- Paginación -->
+      <div class="paginacion" *ngIf="totalPaginasRutas() > 1">
+        <button (click)="cambiarPaginaRutas(-1)" [disabled]="paginaRutas() === 1" class="btn-pagination">
+          Anterior
+        </button>
+        <span>Página {{ paginaRutas() }} de {{ totalPaginasRutas() }}</span>
+        <button (click)="cambiarPaginaRutas(1)" [disabled]="paginaRutas() === totalPaginasRutas()" class="btn-pagination">
+          Siguiente
+        </button>
+      </div>
     </section>
 
-    <!-- REPORTES -->
-    <section *ngIf="tab() === 'reportes'" class="panel">
-      <p>No hay reportes todavía.</p>
+    <!-- CALLES -->
+    <section *ngIf="tab() === 'calles'" class="panel">
+      <!-- Filtro de búsqueda -->
+      <div class="filtro-container">
+        <input 
+          type="text" 
+          class="filtro-input" 
+          placeholder="Buscar por nombre de calle..." 
+          [value]="filtroCalles()"
+          (input)="filtroCalles.set($any($event.target).value)"
+        />
+        <span class="filtro-info">{{ callesFiltradas().length }} resultados</span>
+      </div>
+
+      <p *ngIf="!callesPaginadas().length">No se encontraron calles.</p>
+      <table *ngIf="callesPaginadas().length" class="full-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>ID</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let calle of callesPaginadas()">
+            <td>{{ calle.nombre }}</td>
+            <td>{{ calle.id.substring(0, 13) }}...</td>
+            <td><button (click)="verDetalleCalle(calle.id)" class="btn-info">Ver Geometría</button></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Paginación -->
+      <div class="paginacion" *ngIf="totalPaginasCalles() > 1">
+        <button (click)="cambiarPaginaCalles(-1)" [disabled]="paginaCalles() === 1" class="btn-pagination">
+          Anterior
+        </button>
+        <span>Página {{ paginaCalles() }} de {{ totalPaginasCalles() }}</span>
+        <button (click)="cambiarPaginaCalles(1)" [disabled]="paginaCalles() === totalPaginasCalles()" class="btn-pagination">
+          Siguiente
+        </button>
+      </div>
     </section>
-
-    <!-- CONFIGURACIÓN -->
-    <section *ngIf="tab() === 'config'" class="panel">
-      <div class="config-container">
-        <p class="config-subtitle">
-          Administra tu perfil, apariencia, seguridad y preferencias generales.
-        </p>
-
-        <div class="settings-card">
-          <h3 class="section-heading">Perfil del Usuario</h3>
-          <div class="settings-grid">
-            <div class="settings-column">
-              <div class="form-group">
-                <label>ID de Usuario</label>
-                <input type="text" value="USR-00123" disabled />
-              </div>
-              <div class="form-group">
-                <label>Nombre Completo</label>
-                <input type="text" [(ngModel)]="usuarioNombre" />
-              </div>
-              <div class="form-group">
-                <label>Correo Electrónico</label>
-                <input type="email" value="usuario@empresa.com" />
-              </div>
-              <div class="form-group">
-                <label>Estado</label>
-                <input type="text" value="Activo" disabled />
-              </div>
-            </div>
-
-            <div class="settings-column">
-              <div class="form-group">
-                <label>Contraseña Actual</label>
-                <input type="password" placeholder="••••••••" />
-              </div>
-              <div class="form-group">
-                <label>Nueva Contraseña</label>
-                <input type="password" placeholder="Ingrese nueva contraseña" />
-              </div>
-              <div class="form-group">
-                <label>Confirmar Contraseña</label>
-                <input type="password" placeholder="Repita la contraseña" />
-              </div>
-            </div>
-          </div>
-
-          <div class="settings-actions">
-            <button class="save-btn">Guardar Cambios</button>
-            <button class="cancel-btn">Cancelar</button>
-          </div>
+    
+    <!-- ADMINISTRACIÓN -->
+    <section *ngIf="tab() === 'administracion'" class="panel">
+      <div class="box">
+        <div class="box-header">
+          <h3>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-2.572 1.065c-.94 1.543-3.31.826-2.37 2.37a1.724 1.724 0 00-1.066 2.573c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.572-1.065c-1.543.94-3.31.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 002.572-1.065c.94-1.543 3.31-.826 2.37-2.37a1.724 1.724 0 001.065-2.572z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Administración de Rutas y Vehículos
+          </h3>
         </div>
-
-        <!-- Apariencia y Preferencias -->
-        <div class="settings-card">
-          <h3 class="section-heading">Preferencias y Apariencia</h3>
-          <div class="settings-extra">
+        
+        <div class="settings-grid">
+          <div class="settings-column">
             <div class="form-group">
-              <label>Tema de la Interfaz</label>
-              <select>
-                <option>Claro</option>
-                <option>Oscuro</option>
-                <option>Automático</option>
+              <label>Seleccionar Ruta</label>
+              <select [(ngModel)]="rutaSeleccionadaId">
+                <option value="">Seleccione una ruta</option>
+                <option *ngFor="let r of rutas" [value]="r.id">{{ r.nombre_ruta }}</option>
               </select>
             </div>
+            
             <div class="form-group">
-              <label>Idioma</label>
-              <select>
-                <option>Español</option>
-                <option>Inglés</option>
-                <option>Francés</option>
+              <label>Seleccionar Vehículo</label>
+              <select [(ngModel)]="vehiculoSeleccionadoId">
+                <option value="">Seleccione un vehículo</option>
+                <option *ngFor="let v of vehiculos" [value]="v.id">{{ v.placa }} - {{ v.marca }}</option>
               </select>
             </div>
           </div>
-
-          <div class="notifications">
-            <h4>Notificaciones</h4>
-            <div class="toggle-row">
-              <span>Alertas del sistema</span>
-              <label class="switch">
-                <input type="checkbox" checked />
-                <span class="slider"></span>
-              </label>
+          
+          <div class="settings-column">
+            <div class="form-group">
+              <label>Nombre de Ruta</label>
+              <input type="text" [(ngModel)]="rutaNueva.nombre_ruta" placeholder="Nombre de la ruta">
             </div>
-            <div class="toggle-row">
-              <span>Reportes semanales</span>
-              <label class="switch">
-                <input type="checkbox" />
-                <span class="slider"></span>
-              </label>
-            </div>
-            <div class="toggle-row">
-              <span>Asignaciones automáticas</span>
-              <label class="switch">
-                <input type="checkbox" checked />
-                <span class="slider"></span>
-              </label>
+            
+            <div class="form-group">
+              <label>Color</label>
+              <input type="color" [(ngModel)]="rutaNueva.color_hex">
             </div>
           </div>
         </div>
-
-        <!-- Seguridad -->
-        <div class="settings-card">
-          <h3 class="section-heading">Seguridad y Sesión</h3>
-          <div class="security-grid">
-            <div class="form-group">
-              <label>Autenticación en Dos Pasos (2FA)</label>
-              <div class="toggle-row">
-                <span>Habilitar verificación adicional</span>
-                <label class="switch">
-                  <input type="checkbox" />
-                  <span class="slider"></span>
-                </label>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label>Actividad Reciente</label>
-              <p style="font-size: 0.9rem; color: #555;">Último inicio de sesión: <strong>05/11/2025 21:30</strong></p>
-              <p style="font-size: 0.9rem; color: #555;">Dispositivo: <strong>Windows 10 - Chrome</strong></p>
-            </div>
-          </div>
-          <div class="settings-actions">
-            <button class="save-btn">Cerrar todas las sesiones</button>
-          </div>
-        </div>
-
-        <!-- Almacenamiento -->
-        <div class="settings-card">
-          <h3 class="section-heading">Almacenamiento Local</h3>
-          <p style="color: #555;">Borra la información almacenada localmente en tu navegador.</p>
-          <div class="settings-actions">
-            <button class="cancel-btn" (click)="limpiarDatosLocales()">Limpiar Datos</button>
-          </div>
+        
+        <div class="settings-actions">
+          <button (click)="crearRutaConEjemplo()" class="btn-primary">Crear Ruta Ejemplo</button>
+          <button (click)="iniciarRecorridoEjemplo()" class="btn-success">Iniciar Recorrido</button>
         </div>
       </div>
     </section>
+    
+    <!-- Modal para crear vehículo -->
+    <div class="modal" *ngIf="modalCrearVehiculoAbierto">
+      <div class="modal-card">
+        <h3>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 8H19C19.5304 8 20.0391 8.21071 20.4142 8.58579C20.7893 8.96086 21 9.46957 21 10V14C21 14.5304 20.7893 15.0391 20.4142 15.4142C20.0391 15.7893 19.5304 16 19 16H18M6 8H5C4.46957 8 3.96086 8.21071 3.58579 8.58579C3.21071 8.96086 3 9.46957 3 10V14C3 14.5304 3.21071 15.0391 3.58579 15.4142C3.96086 15.7893 4.46957 16 5 16H6M15 12H9M12 15V9M21 12V18C21 18.5304 20.7893 19.0391 20.4142 19.4142C20.0391 19.7893 19.5304 20 19 20H5C4.46957 20 3.96086 19.7893 3.58579 19.4142C3.21071 19.0391 3 18.5304 3 18V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Crear Nuevo Vehículo
+        </h3>
+        <input 
+          type="text" 
+          placeholder="Placa" 
+          [(ngModel)]="vehiculoNuevo.placa"
+        />
+        <input 
+          type="text" 
+          placeholder="Marca" 
+          [(ngModel)]="vehiculoNuevo.marca"
+        />
+        <input 
+          type="text" 
+          placeholder="Modelo" 
+          [(ngModel)]="vehiculoNuevo.modelo"
+        />
+        <label class="switch-label">
+          <input 
+            type="checkbox" 
+            [(ngModel)]="vehiculoNuevo.activo"
+          /> 
+          <span class="switch-slider"></span>
+          <span class="switch-text">Activo</span>
+        </label>
+        
+        <div class="modal-actions">
+          <button (click)="cerrarModalCrearVehiculo()" class="btn-cancel">Cancelar</button>
+          <button (click)="guardarVehiculo()" class="btn-primary">Crear</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Modal para crear ruta -->
+    <div class="modal" *ngIf="modalCrearRutaAbierta">
+      <div class="modal-card">
+        <h3>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Crear Nueva Ruta
+        </h3>
+        <input 
+          type="text" 
+          placeholder="Nombre de la ruta" 
+          [(ngModel)]="rutaNueva.nombre_ruta"
+        />
+        <input 
+          type="text" 
+          placeholder="Color hexadecimal (opcional)" 
+          [(ngModel)]="rutaNueva.color_hex"
+        />
+        
+        <div class="modal-actions">
+          <button (click)="cerrarModalCrearRuta()" class="btn-cancel">Cancelar</button>
+          <button (click)="guardarRuta()" class="btn-primary">Crear</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Modal para ver detalle de calle -->
+    <div class="modal" *ngIf="modalCalleAbierto">
+      <div class="modal-card">
+        <h3>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13 19L20 12L13 5M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Detalle de Calle
+        </h3>
+        <p><strong>Nombre:</strong> {{ calleSeleccionada?.nombre }}</p>
+        <p><strong>ID:</strong> {{ calleSeleccionada?.id }}</p>
+        <p><strong>Geometría:</strong></p>
+        <pre>{{ calleSeleccionada?.shape }}</pre>
+        
+        <div class="modal-actions">
+          <button (click)="cerrarModalCalle()" class="btn-cancel">Cerrar</button>
+        </div>
+      </div>
+    </div>
   </main>
-</div>
-
-<!-- MODALES DE FORM -->
-<div class="modal" *ngIf="modalCamion">
-  <div class="modal-card">
-    <h3>Agregar Camión</h3>
-    <input [(ngModel)]="nuevoCamion.placa" placeholder="Placa" />
-    <input [(ngModel)]="nuevoCamion.modelo" placeholder="Modelo" />
-    <input [(ngModel)]="nuevoCamion.capacidad" placeholder="Capacidad" />
-    <div class="modal-actions">
-      <button (click)="modalCamion=false">Cancelar</button>
-      <button (click)="agregarCamion()">Guardar</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal" *ngIf="modalChofer">
-  <div class="modal-card">
-    <h3>Agregar Chofer</h3>
-    <input [(ngModel)]="nuevoChofer.nombre" placeholder="Nombre" />
-    <input [(ngModel)]="nuevoChofer.cedula" placeholder="Cédula" />
-    <input [(ngModel)]="nuevoChofer.telefono" placeholder="Teléfono" />
-    <div class="modal-actions">
-      <button (click)="modalChofer=false">Cancelar</button>
-      <button (click)="agregarChofer()">Guardar</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal" *ngIf="modalAsignacion">
-  <div class="modal-card">
-    <h3>Asignar</h3>
-    <select [(ngModel)]="nuevaAsignacion.camion">
-      <option value="">Selecciona camión</option>
-      <option *ngFor="let c of camiones" [value]="c.placa">{{ c.placa }} — {{ c.modelo }}</option>
-    </select>
-
-    <select [(ngModel)]="nuevaAsignacion.chofer">
-      <option value="">Selecciona chofer</option>
-      <option *ngFor="let ch of choferes" [value]="ch.nombre">{{ ch.nombre }}</option>
-    </select>
-
-    <input [(ngModel)]="nuevaAsignacion.ruta" placeholder="Ruta (nombre)" />
-    <div class="modal-actions">
-      <button (click)="modalAsignacion=false">Cancelar</button>
-      <button (click)="agregarAsignacion()">Asignar</button>
-    </div>
-  </div>
 </div>

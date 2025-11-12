@@ -10,6 +10,10 @@ $muted: #667781;
 $shadow-sm: 0 1px 2px rgba(11, 20, 26, 0.06);
 $shadow: 0 1px 3px rgba(11, 20, 26, 0.1);
 $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
+$border-radius: 12px;
+$transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+$gradient-primary: linear-gradient(135deg, #075E54 0%, #128C7E 100%);
+$gradient-secondary: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
 
 /* === GLOBAL === */
 * { 
@@ -25,20 +29,37 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
   color: $text-dark;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   overflow: hidden;
+  transition: $transition;
+  position: relative;
+}
+
+/* === ANIMACIONES DE FONDO === */
+.wrap::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 10% 20%, rgba(37, 211, 102, 0.05) 0%, transparent 20%),
+    radial-gradient(circle at 90% 80%, rgba(18, 140, 126, 0.05) 0%, transparent 20%);
+  z-index: -1;
 }
 
 /* === SIDEBAR COMPACTO === */
 .sidebar {
   width: 240px;
-  background: linear-gradient(180deg, $sidebar-bg 0%, $sidebar-dark 100%);
+  background: $gradient-primary;
   color: #fff;
   display: flex;
   flex-direction: column;
-  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: $transition;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
   position: relative;
   z-index: 100;
   overflow: hidden; 
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
 
   &.closed {
     width: 60px; 
@@ -92,6 +113,18 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
     background: rgba(0, 0, 0, 0.1);
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     min-height: 56px;
+    transition: $transition;
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, $accent, $accent-hover);
+    }
   }
 
   .brand-text {
@@ -102,6 +135,7 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
     transition: opacity 0.25s ease;
     white-space: nowrap; 
     overflow: hidden; 
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   }
 
   .burger {
@@ -112,7 +146,7 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
     cursor: pointer;
     padding: 6px 8px;
     border-radius: 6px;
-    transition: all 0.2s ease;
+    transition: $transition;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -120,6 +154,7 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
     
     &:hover { 
       background: rgba(255, 255, 255, 0.12);
+      transform: scale(1.05);
     }
   }
 
@@ -148,7 +183,7 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
       padding: 10px 12px;
       border-radius: 8px;
       text-decoration: none;
-      transition: all 0.2s ease;
+      transition: $transition;
       cursor: pointer;
       position: relative;
       font-size: 0.9rem;
@@ -157,7 +192,7 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
         width: 18px;
         height: 18px;
         flex-shrink: 0;
-        transition: all 0.2s ease;
+        transition: $transition;
       }
 
       span { 
@@ -217,10 +252,19 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
       padding: 0 4px;
       white-space: nowrap; 
       overflow: hidden; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
       
       strong {
         color: $accent;
         font-weight: 600;
+      }
+      
+      svg {
+        width: 16px;
+        height: 16px;
       }
     }
     
@@ -232,14 +276,20 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
       border-radius: 8px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: $transition;
       font-size: 0.85rem;
       white-space: nowrap; 
+      box-shadow: $shadow-sm;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
       
       &:hover { 
-        background: #128C7E;
+        background: $accent-hover;
         color: #fff;
         transform: translateY(-1px);
+        box-shadow: $shadow;
       }
     }
   }
@@ -254,6 +304,7 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
   gap: 16px;
   overflow-y: auto;
   background: $bg-page;
+  transition: $transition;
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -276,6 +327,12 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
   align-items: center;
   margin-bottom: 4px;
   padding: 0 4px;
+  animation: fadeInDown 0.4s ease;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: $border-radius;
+  padding: 16px 20px;
+  box-shadow: $shadow-sm;
 
   h2 {
     margin: 0;
@@ -283,6 +340,16 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
     color: $text-dark;
     font-weight: 700;
     letter-spacing: -0.4px;
+    animation: fadeIn 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    svg {
+      width: 24px;
+      height: 24px;
+      color: $accent;
+    }
   }
 
   .header-actions {
@@ -299,7 +366,10 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
       font-size: 0.85rem;
       cursor: pointer;
       box-shadow: $shadow-sm;
-      transition: all 0.2s ease;
+      transition: $transition;
+      display: flex;
+      align-items: center;
+      gap: 6px;
       
       &:hover {
         background: $accent-hover;
@@ -319,25 +389,29 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
   display: flex;
   flex-direction: column;
   gap: 16px;
+  animation: fadeIn 0.5s ease;
 }
 
+/* === ESTADÍSTICAS PRINCIPALES === */
 .stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
   
   .stat {
     background: $card-bg;
     padding: 20px 18px;
-    border-radius: 12px;
+    border-radius: $border-radius;
     box-shadow: $shadow;
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    transition: all 0.2s ease;
+    gap: 8px;
+    transition: $transition;
     border: 1px solid rgba(0, 0, 0, 0.04);
     position: relative;
     overflow: hidden;
+    cursor: pointer;
+    transform-style: preserve-3d;
     
     &::before {
       content: '';
@@ -350,8 +424,27 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
     }
     
     &:hover {
-      transform: translateY(-2px);
+      transform: translateY(-5px) scale(1.02);
       box-shadow: $shadow-lg;
+      animation: none;
+    }
+    
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(37, 211, 102, 0.1);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      color: $accent;
+      box-shadow: $shadow-sm;
+      
+      svg {
+        width: 24px;
+        height: 24px;
+      }
     }
     
     h3 { 
@@ -363,51 +456,73 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
       background-clip: text;
       font-weight: 800;
       line-height: 1;
+      transition: $transition;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     }
     
     p { 
       margin: 0;
       color: $muted;
       font-weight: 500;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
     }
   }
 }
 
+/* === CONTENEDOR DOS COLUMNAS === */
 .two-col {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 12px;
+  gap: 16px;
 }
 
+/* === TARJETAS PRINCIPALES === */
 .box {
   background: $card-bg;
-  border-radius: 12px;
-  padding: 16px;
+  border-radius: $border-radius;
+  padding: 20px;
   box-shadow: $shadow;
-  transition: all 0.2s ease;
+  transition: $transition;
   border: 1px solid rgba(0, 0, 0, 0.04);
+  animation: fadeInUp 0.4s ease;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, $accent 0%, $accent-hover 100%);
+  }
   
   &:hover { 
-    transform: translateY(-1px);
+    transform: translateY(-3px);
     box-shadow: $shadow-lg;
   }
 
-  h3 {
-    color: $text-dark;
-    font-size: 1.05rem;
-    font-weight: 700;
-    margin-bottom: 12px;
+  .box-header {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 10px;
+    margin-bottom: 16px;
     
-    &::before {
-      content: '';
-      width: 3px;
-      height: 16px;
-      background: $accent;
-      border-radius: 2px;
+    h3 {
+      color: $text-dark;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      
+      svg {
+        width: 20px;
+        height: 20px;
+        color: $accent;
+      }
     }
   }
 
@@ -415,6 +530,7 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
     color: $muted;
     margin: 0;
     font-size: 0.9rem;
+    line-height: 1.5;
   }
 
   table {
@@ -423,7 +539,7 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
     font-size: 0.85rem;
     
     th, td {
-      padding: 8px 6px;
+      padding: 10px 8px;
       text-align: left;
       border-bottom: 1px solid rgba(0, 0, 0, 0.04);
     }
@@ -434,7 +550,7 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
       th {
         color: $text-dark;
         font-weight: 600;
-        font-size: 0.75rem;
+        font-size: 0.8rem;
         text-transform: uppercase;
         letter-spacing: 0.5px;
       }
@@ -456,20 +572,44 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
       td {
         color: $text-dark;
         
+        .acciones-boton {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+          justify-content: center;
+          
+          button {
+            margin: 0;
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            border-radius: 6px;
+            white-space: nowrap;
+            
+            &:hover {
+              transform: translateY(-1px);
+              box-shadow: $shadow;
+            }
+          }
+        }
+        
         button {
           background: rgba(220, 53, 69, 0.08);
           color: #dc3545;
           border: none;
-          padding: 4px 10px;
+          padding: 6px 12px;
           border-radius: 6px;
           cursor: pointer;
           font-weight: 500;
           font-size: 0.75rem;
-          transition: all 0.15s ease;
+          transition: $transition;
+          display: flex;
+          align-items: center;
+          gap: 4px;
           
           &:hover { 
             background: #dc3545;
             color: #fff;
+            transform: translateY(-1px);
           }
         }
       }
@@ -480,22 +620,34 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
 .full-table {
   width: 100%;
   background: $card-bg;
-  border-radius: 12px;
-  padding: 16px;
+  border-radius: $border-radius;
+  padding: 20px;
   box-shadow: $shadow;
   border: 1px solid rgba(0, 0, 0, 0.04);
   border-collapse: collapse;
   font-size: 0.9rem;
+  animation: fadeIn 0.4s ease;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, $accent 0%, $accent-hover 100%);
+  }
   
   thead {
     background: rgba(37, 211, 102, 0.06);
     
     th {
-      padding: 10px 12px;
+      padding: 12px 12px;
       text-align: left;
       color: $text-dark;
       font-weight: 600;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -516,8 +668,28 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
     }
     
     td {
-      padding: 10px 12px;
+      padding: 12px 12px;
       color: $text-dark;
+      
+      .acciones-boton {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+        
+        button {
+          margin: 0;
+          padding: 6px 12px;
+          font-size: 0.75rem;
+          border-radius: 6px;
+          white-space: nowrap;
+          
+          &:hover {
+            transform: translateY(-1px);
+            box-shadow: $shadow;
+          }
+        }
+      }
       
       button {
         background: rgba(220, 53, 69, 0.08);
@@ -528,11 +700,15 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
         cursor: pointer;
         font-weight: 500;
         font-size: 0.8rem;
-        transition: all 0.15s ease;
+        transition: $transition;
+        display: flex;
+        align-items: center;
+        gap: 4px;
         
         &:hover { 
           background: #dc3545;
           color: #fff;
+          transform: translateY(-1px);
         }
       }
     }
@@ -542,7 +718,7 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
 /* === CONFIGURACIÓN COMPACTA === */
 .config-container {
   background: $card-bg;
-  border-radius: 12px;
+  border-radius: $border-radius;
   padding: 20px;
   box-shadow: $shadow;
   border: 1px solid rgba(0, 0, 0, 0.04);
@@ -599,7 +775,7 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
   gap: 4px;
 
   label {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     color: $text-dark;
     font-weight: 500;
   }
@@ -608,11 +784,11 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
   select {
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 8px;
-    padding: 9px 12px;
+    padding: 10px 12px;
     font-size: 0.9rem;
     background: #fff;
     color: $text-dark;
-    transition: all 0.2s ease;
+    transition: $transition;
     font-family: inherit;
 
     &:focus {
@@ -638,7 +814,7 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
   padding: 10px 12px;
   background: #fff;
   margin-bottom: 6px;
-  transition: all 0.15s ease;
+  transition: $transition;
 
   &:hover {
     border-color: rgba(37, 211, 102, 0.25);
@@ -652,7 +828,15 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
   }
 }
 
-.switch {
+.switch-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.switch-slider {
   position: relative;
   display: inline-block;
   width: 44px;
@@ -664,7 +848,7 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
     height: 0;
   }
 
-  .slider {
+  .switch-slider {
     position: absolute;
     cursor: pointer;
     inset: 0;
@@ -686,13 +870,19 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
     }
   }
 
-  input:checked + .slider {
+  input:checked + .switch-slider {
     background-color: $accent;
   }
 
-  input:checked + .slider:before {
+  input:checked + .switch-slider:before {
     transform: translateX(20px);
   }
+}
+
+.switch-text {
+  font-size: 0.85rem;
+  color: $text-dark;
+  font-weight: 500;
 }
 
 .settings-extra {
@@ -728,36 +918,152 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
   gap: 8px;
   margin-top: 14px;
 
-  .save-btn {
+  .btn-primary {
     background: $accent;
     color: #fff;
     border: none;
-    padding: 9px 18px;
+    padding: 10px 18px;
     border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: $transition;
     font-size: 0.85rem;
+    box-shadow: $shadow-sm;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 
     &:hover {
       background: $accent-hover;
       transform: translateY(-1px);
+      box-shadow: $shadow;
     }
   }
 
-  .cancel-btn {
-    background: #f3f4f6;
-    color: $text-dark;
+  .btn-success {
+    background: #28a745;
+    color: #fff;
     border: none;
-    padding: 9px 18px;
+    padding: 10px 18px;
     border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: $transition;
+    font-size: 0.85rem;
+    box-shadow: $shadow-sm;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    &:hover {
+      background: #218838;
+      transform: translateY(-1px);
+      box-shadow: $shadow;
+    }
+  }
+
+  .btn-warning {
+    background: #ffc107;
+    color: #212529;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: $transition;
+    font-size: 0.85rem;
+    box-shadow: $shadow-sm;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    &:hover {
+      background: #e0a800;
+      transform: translateY(-1px);
+      box-shadow: $shadow;
+    }
+  }
+
+  .btn-danger {
+    background: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: $transition;
+    font-size: 0.85rem;
+    box-shadow: $shadow-sm;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    &:hover {
+      background: #c82333;
+      transform: translateY(-1px);
+      box-shadow: $shadow;
+    }
+  }
+
+  .btn-info {
+    background: #17a2b8;
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: $transition;
+    font-size: 0.85rem;
+    box-shadow: $shadow-sm;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    &:hover {
+      background: #138496;
+      transform: translateY(-1px);
+      box-shadow: $shadow;
+    }
+  }
+
+  .btn-cancel {
+    background: #f3f4f6;
+    color: $text-dark;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: $transition;
     font-size: 0.85rem;
 
     &:hover {
       background: #e5e7eb;
+      transform: translateY(-1px);
+    }
+  }
+
+  .btn-pagination {
+    background: $card-bg;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: $transition;
+    
+    &:hover:not(:disabled) {
+      background: $accent;
+      color: #fff;
+      border-color: $accent;
+      transform: translateY(-1px);
+    }
+    
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
   }
 }
@@ -786,23 +1092,44 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
   flex-direction: column;
   gap: 14px;
   animation: slideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, $accent 0%, $accent-hover 100%);
+  }
 
   h3 {
     margin: 0;
     font-size: 1.25rem;
     color: $text-dark;
     font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    svg {
+      width: 20px;
+      height: 20px;
+      color: $accent;
+    }
   }
 
   input,
   select {
-    padding: 10px 12px;
+    padding: 12px 12px;
     border-radius: 8px;
     border: 1px solid rgba(0, 0, 0, 0.1);
     background: #fff;
     color: $text-dark;
     font-size: 0.9rem;
-    transition: all 0.2s ease;
+    transition: $transition;
     font-family: inherit;
 
     &:focus {
@@ -810,6 +1137,16 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
       box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.08);
       outline: none;
     }
+  }
+
+  pre {
+    background: #f5f5f5;
+    padding: 12px;
+    border-radius: 8px;
+    overflow: auto;
+    font-size: 0.8rem;
+    max-height: 200px;
+    margin: 0;
   }
 
   .modal-actions {
@@ -822,15 +1159,16 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
       background: #f3f4f6;
       color: $text-dark;
       border: none;
-      padding: 9px 18px;
+      padding: 10px 18px;
       border-radius: 8px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: $transition;
       font-size: 0.85rem;
 
       &:hover {
         background: #e5e7eb;
+        transform: translateY(-1px);
       }
     }
 
@@ -838,16 +1176,17 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
       background: $accent;
       color: #fff;
       border: none;
-      padding: 9px 18px;
+      padding: 10px 18px;
       border-radius: 8px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: $transition;
       font-size: 0.85rem;
 
       &:hover {
         background: $accent-hover;
         transform: translateY(-1px);
+        box-shadow: $shadow;
       }
     }
   }
@@ -869,6 +1208,34 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
   }
 }
 
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0px); }
+}
+
 /* === RESPONSIVE === */
 @media (max-width: 1024px) {
   .two-col {
@@ -877,6 +1244,10 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
 
   .settings-grid {
     grid-template-columns: 1fr;
+  }
+  
+  .stats {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   }
 }
 
@@ -934,4 +1305,1364 @@ $shadow-lg: 0 4px 12px rgba(11, 20, 26, 0.15);
 .menu a svg {
   cursor: pointer !important;
   user-select: none;
+}
+
+/* === NOTIFICACIONES === */
+.notificacion {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-weight: 500;
+  animation: slideDown 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: $shadow-sm;
+  
+  &.success {
+    background: rgba(37, 211, 102, 0.15);
+    color: #128C7E;
+    border: 1px solid rgba(37, 211, 102, 0.25);
+  }
+  
+  &.error {
+    background: rgba(220, 53, 69, 0.15);
+    color: #dc3545;
+    border: 1px solid rgba(220, 53, 69, 0.25);
+  }
+  
+  &.info {
+    background: rgba(52, 152, 219, 0.15);
+    color: #2980b9;
+    border: 1px solid rgba(52, 152, 219, 0.25);
+  }
+  
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* === FILTROS Y PAGINACIÓN === */
+.filtro-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  background: $card-bg;
+  padding: 12px 16px;
+  border-radius: $border-radius;
+  box-shadow: $shadow-sm;
+  
+  .filtro-input {
+    flex: 1;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: #fff;
+    color: $text-dark;
+    font-size: 0.9rem;
+    transition: $transition;
+    font-family: inherit;
+    
+    &:focus {
+      border-color: $accent;
+      box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.08);
+      outline: none;
+    }
+  }
+  
+  .filtro-info {
+    color: $muted;
+    font-size: 0.85rem;
+    background: rgba(37, 211, 102, 0.1);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+}
+
+.paginacion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+  background: $card-bg;
+  padding: 12px 16px;
+  border-radius: $border-radius;
+  box-shadow: $shadow-sm;
+  
+  button {
+    background: $card-bg;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: $transition;
+    
+    &:hover:not(:disabled) {
+      background: $accent;
+      color: #fff;
+      border-color: $accent;
+      transform: translateY(-1px);
+    }
+    
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+  
+  span {
+    color: $muted;
+    font-size: 0.9rem;
+  }
+}
+
+.color-badge {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* === MAPA SIMULADO === */
+.mapa-container {
+  height: 400px;
+  background: #e0f7fa;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 16px 0;
+  border: 1px dashed #b2ebf2;
+  transition: $transition;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 30%, rgba(37, 211, 102, 0.1) 0%, transparent 30%),
+      radial-gradient(circle at 80% 70%, rgba(18, 140, 126, 0.1) 0%, transparent 30%);
+  }
+  
+  &:hover {
+    box-shadow: $shadow-lg;
+  }
+  
+  .mapa-content {
+    text-align: center;
+    color: #00695c;
+    position: relative;
+    z-index: 1;
+    
+    .vehiculo-movimiento {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      background: $accent;
+      border-radius: 50%;
+      margin: 10px;
+      animation: moveVehicle 3s infinite;
+      position: relative;
+      transition: $transition;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      
+      &:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 15px rgba(37, 211, 102, 0.5);
+      }
+      
+      &::after {
+        content: '🚚';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 18px;
+      }
+    }
+    
+    @keyframes moveVehicle {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(100px); }
+      50% { transform: translateY(50px); }
+      75% { transform: translateX(-50px); }
+      100% { transform: translateX(0); }
+    }
+  }
+}
+
+/* === SEGUIMIENTO EN TIEMPO REAL === */
+.seguimiento-real {
+  background: rgba(37, 211, 102, 0.05);
+  border: 1px solid rgba(37, 211, 102, 0.2);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+  animation: fadeIn 0.4s ease;
+  
+  .estado-seguimiento {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    
+    .estado-indicador {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      
+      .indicador {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: $accent;
+        animation: pulse 1s infinite;
+      }
+    }
+  }
+  
+  .info-posiciones {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    
+    .info-item {
+      background: rgba(37, 211, 102, 0.1);
+      padding: 12px;
+      border-radius: 6px;
+      text-align: center;
+      transition: $transition;
+      
+      &:hover {
+        transform: translateY(-2px);
+        background: rgba(37, 211, 102, 0.15);
+      }
+      
+      .valor {
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: $accent;
+      }
+      
+      .etiqueta {
+        font-size: 0.8rem;
+        color: $muted;
+      }
+    }
+  }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* === ANIMACIONES DE TRANSICIÓN === */
+.fade-in {
+  animation: fadeIn 0.3s ease;
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease;
+}
+
+/* === BOTONES MEJORADOS === */
+button {
+  transition: $transition;
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: $shadow;
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+/* === PANEL DE CLIMA === */
+.clima-panel {
+  background: $gradient-secondary;
+  color: white;
+  border-radius: $border-radius;
+  padding: 16px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: $shadow;
+  animation: fadeIn 0.5s ease;
+  position: relative;
+  overflow: hidden;
+  min-height: 80px;
+  flex-shrink: 0;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 30%),
+      radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 30%);
+    z-index: -1;
+  }
+  
+  .clima-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    z-index: 1;
+    
+    .clima-icon {
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+    }
+    
+    .clima-detalle {
+      .temperatura {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+      
+      .condicion {
+        font-size: 0.9rem;
+        opacity: 0.9;
+      }
+    }
+  }
+  
+  .clima-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    position: relative;
+    z-index: 1;
+    
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.8rem;
+      
+      svg {
+        width: 14px;
+        height: 14px;
+      }
+    }
+  }
+}
+/* === ANIMACIONES DE LLUVIA === */
+.rain-effect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.7;
+}
+
+.raindrop {
+  position: absolute;
+  top: -20px;
+  width: 2px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 0 0 2px 2px;
+  animation: fall linear infinite;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(100vh);
+  }
+}
+
+/* === ICONOS DE CLIMA === */
+.sunny {
+  color: #FFD700;
+}
+
+.cloudy {
+  color: #B0C4DE;
+}
+
+.rainy {
+  color: #4682B4;
+}
+
+.night {
+  color: #4B0082;
+}
+
+/* === ESTILOS PARA CALLES === */
+.calles-container {
+  background: $card-bg;
+  border-radius: $border-radius;
+  padding: 20px;
+  box-shadow: $shadow;
+  margin-top: 16px;
+}
+
+.calles-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: rgba(37, 211, 102, 0.04);
+  border-radius: $border-radius;
+  border: 1px solid rgba(37, 211, 102, 0.08);
+  
+  h3 {
+    color: $text-dark;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    svg {
+      width: 20px;
+      height: 20px;
+      color: $accent;
+    }
+  }
+}
+
+.calles-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.calle-item {
+  background: #f8f9fa;
+  border-radius: $border-radius;
+  padding: 16px;
+  box-shadow: $shadow-sm;
+  transition: $transition;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow;
+  }
+  
+  .calle-nombre {
+    font-weight: 600;
+    font-size: 1rem;
+    color: $text-dark;
+    margin: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    svg {
+      width: 18px;
+      height: 18px;
+      color: $accent;
+    }
+  }
+  
+  .calle-id {
+    font-size: 0.85rem;
+    color: $muted;
+    margin: 0 0 8px 0;
+    word-break: break-all;
+  }
+  
+  .calle-acciones {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    
+    button {
+      background: rgba(220, 53, 69, 0.08);
+      color: #dc3545;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.75rem;
+      transition: $transition;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      
+      &:hover { 
+        background: #dc3545;
+        color: #fff;
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+
+/* === ESTILOS PARA LA BÚSQUEDA DE CALLES === */
+.busqueda-calles {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  background: $card-bg;
+  padding: 12px 16px;
+  border-radius: $border-radius;
+  box-shadow: $shadow-sm;
+  
+  .busqueda-input {
+    flex: 1;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: #fff;
+    color: $text-dark;
+    font-size: 0.9rem;
+    transition: $transition;
+    font-family: inherit;
+    
+    &:focus {
+      border-color: $accent;
+      box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.08);
+      outline: none;
+    }
+  }
+  
+  .resultados-count {
+    color: $muted;
+    font-size: 0.85rem;
+    background: rgba(37, 211, 102, 0.1);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+}
+
+/* === ESTILOS PARA EL MAPA DE CALLES === */
+.mapa-calles {
+  height: 400px;
+  background: #e0f7fa;
+  border-radius: 8px;
+  margin: 16px 0;
+  position: relative;
+  overflow: hidden;
+  box-shadow: $shadow-sm;
+  
+  #mapa-calles {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    box-shadow: $shadow-sm;
+  }
+}
+
+/* === ESTILOS PARA LA VISTA DETALLADA DE CALLE === */
+.detalle-calle {
+  background: $card-bg;
+  border-radius: $border-radius;
+  padding: 20px;
+  box-shadow: $shadow;
+  margin-top: 16px;
+}
+
+.detalle-calle-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: rgba(37, 211, 102, 0.04);
+  border-radius: $border-radius;
+  border: 1px solid rgba(37, 211, 102, 0.08);
+  
+  h3 {
+    color: $text-dark;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    svg {
+      width: 20px;
+      height: 20px;
+      color: $accent;
+    }
+  }
+}
+
+.detalle-calle-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.detalle-calle-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  
+  label {
+    font-size: 0.85rem;
+    color: $text-dark;
+    font-weight: 500;
+  }
+  
+  .value {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: #fff;
+    color: $text-dark;
+    font-size: 0.9rem;
+    word-break: break-all;
+    white-space: pre-wrap;
+    font-family: monospace;
+  }
+}
+
+.detalle-calle-acciones {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  
+  button {
+    background: rgba(220, 53, 69, 0.08);
+    color: #dc3545;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.8rem;
+    transition: $transition;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    
+    &:hover { 
+      background: #dc3545;
+      color: #fff;
+      transform: translateY(-1px);
+    }
+  }
+}
+
+/* === ESTILOS PARA LA VISTA DE RUTAS === */
+.rutas-container {
+  background: $card-bg;
+  border-radius: $border-radius;
+  padding: 20px;
+  box-shadow: $shadow;
+  margin-top: 16px;
+}
+
+.rutas-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: rgba(37, 211, 102, 0.04);
+  border-radius: $border-radius;
+  border: 1px solid rgba(37, 211, 102, 0.08);
+  
+  h3 {
+    color: $text-dark;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    svg {
+      width: 20px;
+      height: 20px;
+      color: $accent;
+    }
+  }
+}
+
+.rutas-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.ruta-item {
+  background: #f8f9fa;
+  border-radius: $border-radius;
+  padding: 16px;
+  box-shadow: $shadow-sm;
+  transition: $transition;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow;
+  }
+  
+  .ruta-nombre {
+    font-weight: 600;
+    font-size: 1rem;
+    color: $text-dark;
+    margin: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    svg {
+      width: 18px;
+      height: 18px;
+      color: $accent;
+    }
+  }
+  
+  .ruta-color {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 8px 0;
+    
+    .color-indicator {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    .color-value {
+      font-size: 0.85rem;
+      color: $muted;
+    }
+  }
+  
+  .ruta-fecha {
+    font-size: 0.85rem;
+    color: $muted;
+    margin: 0 0 8px 0;
+  }
+  
+  .ruta-acciones {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    
+    button {
+      background: rgba(220, 53, 69, 0.08);
+      color: #dc3545;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.75rem;
+      transition: $transition;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      
+      &:hover { 
+        background: #dc3545;
+        color: #fff;
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+
+/* === ESTILOS PARA LA VISTA DETALLADA DE RUTA === */
+.detalle-ruta {
+  background: $card-bg;
+  border-radius: $border-radius;
+  padding: 20px;
+  box-shadow: $shadow;
+  margin-top: 16px;
+}
+
+.detalle-ruta-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: rgba(37, 211, 102, 0.04);
+  border-radius: $border-radius;
+  border: 1px solid rgba(37, 211, 102, 0.08);
+  
+  h3 {
+    color: $text-dark;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    svg {
+      width: 20px;
+      height: 20px;
+      color: $accent;
+    }
+  }
+}
+
+.detalle-ruta-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.detalle-ruta-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  
+  label {
+    font-size: 0.85rem;
+    color: $text-dark;
+    font-weight: 500;
+  }
+  
+  .value {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: #fff;
+    color: $text-dark;
+    font-size: 0.9rem;
+    word-break: break-all;
+    white-space: pre-wrap;
+    font-family: monospace;
+  }
+}
+
+.detalle-ruta-acciones {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  
+  button {
+    background: rgba(220, 53, 69, 0.08);
+    color: #dc3545;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.8rem;
+    transition: $transition;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    
+    &:hover { 
+      background: #dc3545;
+      color: #fff;
+      transform: translateY(-1px);
+    }
+  }
+}
+
+/* === ESTILOS PARA LA VISTA DE RECORRIDOS === */
+.recorridos-container {
+  background: $card-bg;
+  border-radius: $border-radius;
+  padding: 20px;
+  box-shadow: $shadow;
+  margin-top: 16px;
+}
+
+.recorridos-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: rgba(37, 211, 102, 0.04);
+  border-radius: $border-radius;
+  border: 1px solid rgba(37, 211, 102, 0.08);
+  
+  h3 {
+    color: $text-dark;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    svg {
+      width: 20px;
+      height: 20px;
+      color: $accent;
+    }
+  }
+}
+
+.recorridos-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.recorrido-item {
+  background: #f8f9fa;
+  border-radius: $border-radius;
+  padding: 16px;
+  box-shadow: $shadow-sm;
+  transition: $transition;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow;
+  }
+  
+  .recorrido-id {
+    font-weight: 600;
+    font-size: 1rem;
+    color: $text-dark;
+    margin: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    svg {
+      width: 18px;
+      height: 18px;
+      color: $accent;
+    }
+  }
+  
+  .recorrido-ruta {
+    font-size: 0.85rem;
+    color: $muted;
+    margin: 0 0 8px 0;
+  }
+  
+  .recorrido-vehiculo {
+    font-size: 0.85rem;
+    color: $muted;
+    margin: 0 0 8px 0;
+  }
+  
+  .recorrido-fecha {
+    font-size: 0.85rem;
+    color: $muted;
+    margin: 0 0 8px 0;
+  }
+  
+  .recorrido-acciones {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    
+    button {
+      background: rgba(220, 53, 69, 0.08);
+      color: #dc3545;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.75rem;
+      transition: $transition;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      
+      &:hover { 
+        background: #dc3545;
+        color: #fff;
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+
+/* === ESTILOS PARA LA VISTA DETALLADA DE RECORRIDO === */
+.detalle-recorrido {
+  background: $card-bg;
+  border-radius: $border-radius;
+  padding: 20px;
+  box-shadow: $shadow;
+  margin-top: 16px;
+}
+
+.detalle-recorrido-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: rgba(37, 211, 102, 0.04);
+  border-radius: $border-radius;
+  border: 1px solid rgba(37, 211, 102, 0.08);
+  
+  h3 {
+    color: $text-dark;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    svg {
+      width: 20px;
+      height: 20px;
+      color: $accent;
+    }
+  }
+}
+
+.detalle-recorrido-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.detalle-recorrido-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  
+  label {
+    font-size: 0.85rem;
+    color: $text-dark;
+    font-weight: 500;
+  }
+  
+  .value {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: #fff;
+    color: $text-dark;
+    font-size: 0.9rem;
+    word-break: break-all;
+    white-space: pre-wrap;
+    font-family: monospace;
+  }
+}
+
+.detalle-recorrido-acciones {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  
+  button {
+    background: rgba(220, 53, 69, 0.08);
+    color: #dc3545;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.8rem;
+    transition: $transition;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    
+    &:hover { 
+      background: #dc3545;
+      color: #fff;
+      transform: translateY(-1px);
+    }
+  }
+}
+
+/* === ESTILOS PARA LA VISTA DE VEHÍCULOS === */
+.vehiculos-container {
+  background: $card-bg;
+  border-radius: $border-radius;
+  padding: 20px;
+  box-shadow: $shadow;
+  margin-top: 16px;
+}
+
+.vehiculos-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: rgba(37, 211, 102, 0.04);
+  border-radius: $border-radius;
+  border: 1px solid rgba(37, 211, 102, 0.08);
+  
+  h3 {
+    color: $text-dark;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    svg {
+      width: 20px;
+      height: 20px;
+      color: $accent;
+    }
+  }
+}
+
+.vehiculos-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.vehiculo-item {
+  background: #f8f9fa;
+  border-radius: $border-radius;
+  padding: 16px;
+  box-shadow: $shadow-sm;
+  transition: $transition;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow;
+  }
+  
+  .vehiculo-placa {
+    font-weight: 600;
+    font-size: 1rem;
+    color: $text-dark;
+    margin: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    svg {
+      width: 18px;
+      height: 18px;
+      color: $accent;
+    }
+  }
+  
+  .vehiculo-modelo {
+    font-size: 0.85rem;
+    color: $muted;
+    margin: 0 0 8px 0;
+  }
+  
+  .vehiculo-marca {
+    font-size: 0.85rem;
+    color: $muted;
+    margin: 0 0 8px 0;
+  }
+  
+  .vehiculo-activo {
+    font-size: 0.85rem;
+    color: $muted;
+    margin: 0 0 8px 0;
+  }
+  
+  .vehiculo-fecha {
+    font-size: 0.85rem;
+    color: $muted;
+    margin: 0 0 8px 0;
+  }
+  
+  .vehiculo-acciones {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    
+    button {
+      background: rgba(220, 53, 69, 0.08);
+      color: #dc3545;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.75rem;
+      transition: $transition;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      
+      &:hover { 
+        background: #dc3545;
+        color: #fff;
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+
+/* === ESTILOS PARA LA VISTA DETALLADA DE VEHÍCULO === */
+.detalle-vehiculo {
+  background: $card-bg;
+  border-radius: $border-radius;
+  padding: 20px;
+  box-shadow: $shadow;
+  margin-top: 16px;
+}
+
+.detalle-vehiculo-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: rgba(37, 211, 102, 0.04);
+  border-radius: $border-radius;
+  border: 1px solid rgba(37, 211, 102, 0.08);
+  
+  h3 {
+    color: $text-dark;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    svg {
+      width: 20px;
+      height: 20px;
+      color: $accent;
+    }
+  }
+}
+
+.detalle-vehiculo-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.detalle-vehiculo-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  
+  label {
+    font-size: 0.85rem;
+    color: $text-dark;
+    font-weight: 500;
+  }
+  
+  .value {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: #fff;
+    color: $text-dark;
+    font-size: 0.9rem;
+    word-break: break-all;
+    white-space: pre-wrap;
+    font-family: monospace;
+  }
+}
+
+.detalle-vehiculo-acciones {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  
+  button {
+    background: rgba(220, 53, 69, 0.08);
+    color: #dc3545;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.8rem;
+    transition: $transition;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    
+    &:hover { 
+      background: #dc3545;
+      color: #fff;
+      transform: translateY(-1px);
+    }
+  }
+}
+
+/* === ESTILOS PARA BOTONES ORGANIZADOS === */
+.acciones-boton {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  
+  button {
+    margin: 0;
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    border-radius: 6px;
+    white-space: nowrap;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: $shadow;
+    }
+  }
 }
