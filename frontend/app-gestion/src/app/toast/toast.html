@@ -1,61 +1,55 @@
-@if (toastService.toasts().length > 0) {
-  @for (toast of toastService.toasts(); track toast.id) {
-    <div class="modal-overlay" [@overlayAnimation]>
-      <div class="success-modal" [@modalAnimation]>
+<!-- src/app/toast/toast.html -->
+<div *ngIf="toastService.toasts().length > 0">
+  <div
+    *ngFor="let toast of toastService.toasts(); trackBy: trackByFn"
+    class="modal-overlay"
+    [@overlayAnimation]
+  >
+    <div
+      class="toast-modal"
+      [class.success]="toast.type === 'success'"
+      [class.error]="toast.type === 'error'"
+      [@modalAnimation]
+    >
+      <!-- Icono dinámico -->
+      <div class="icon-circle">
+        <svg *ngIf="toast.type === 'success'" viewBox="0 0 100 100" class="icon-svg">
+          <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="2.5"/>
+          <path d="M 30 50 L 45 65 L 70 35" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <svg *ngIf="toast.type === 'error'" viewBox="0 0 100 100" class="icon-svg">
+          <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="2.5"/>
+          <path d="M 30 30 L 70 70" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M 70 30 L 30 70" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <h1 class="toast-title">{{ toast.message }}</h1>
+
+      <div class="divider-line"></div>
+
+      <div *ngIf="toast.type === 'success'" class="system-icons">
+        <svg class="icon-item truck-icon" viewBox="0 0 64 64" width="50" height="50">
+          <rect x="8" y="22" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+          <circle cx="16" cy="27" r="2.5" fill="currentColor" opacity="0.6"/>
+          <rect x="26" y="14" width="32" height="24" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+          <line x1="26" y1="24" x2="58" y2="24" stroke="currentColor" stroke-width="1.5" opacity="0.5"/>
+          <circle cx="16" cy="42" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
+          <circle cx="50" cy="42" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
+        </svg>
         
-        <!-- Checkmark en círculo -->
-        <div class="checkmark-circle">
-          <svg viewBox="0 0 100 100" class="checkmark-svg">
-            <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="2.5"/>
-            <path d="M 30 50 L 45 65 L 70 35" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
+        <svg class="icon-item leaf-icon" viewBox="0 0 64 64" width="50" height="50">
+          <path d="M 32 8 Q 50 20 45 48 Q 32 40 20 48 Q 15 20 32 8" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M 32 12 Q 40 28 37 45" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.6"/>
+        </svg>
+      </div>
 
-        <!-- Título principal -->
-        <h1 class="success-title">{{ toast.message }}</h1>
+      <h2 *ngIf="toast.type === 'success'" class="welcome-text">Bienvenido al sistema</h2>
+      <p *ngIf="toast.type === 'success'" class="description-text">Accediendo a la gestión de rutas de recolección sostenible</p>
 
-        <!-- Separador visual -->
-        <div class="divider-line"></div>
-
-        <!-- Iconos del sistema - Camión y Hoja -->
-        <div class="system-icons">
-          <!-- Icono Camión -->
-          <svg class="icon-item truck-icon" viewBox="0 0 64 64" width="50" height="50">
-            <!-- Cabina -->
-            <rect x="8" y="22" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
-            <!-- Ventana cabina -->
-            <circle cx="16" cy="27" r="2.5" fill="currentColor" opacity="0.6"/>
-            <!-- Contenedor -->
-            <rect x="26" y="14" width="32" height="24" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
-            <!-- Línea decorativa -->
-            <line x1="26" y1="24" x2="58" y2="24" stroke="currentColor" stroke-width="1.5" opacity="0.5"/>
-            <!-- Rueda trasera -->
-            <circle cx="16" cy="42" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
-            <!-- Rueda delantera -->
-            <circle cx="50" cy="42" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
-          </svg>
-          
-          <!-- Icono Hoja/Recicla -->
-          <svg class="icon-item leaf-icon" viewBox="0 0 64 64" width="50" height="50">
-            <!-- Hoja principal -->
-            <path d="M 32 8 Q 50 20 45 48 Q 32 40 20 48 Q 15 20 32 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-            <!-- Vena de la hoja -->
-            <path d="M 32 12 Q 40 28 37 45" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.6"/>
-          </svg>
-        </div>
-
-        <!-- Subtítulo -->
-        <h2 class="welcome-text">Bienvenido al sistema</h2>
-
-        <!-- Descripción -->
-        <p class="description-text">Accediendo a la gestión de rutas de recolección sostenible</p>
-
-        <!-- Barra de progreso -->
-        <div class="progress-bar">
-          <div class="progress-fill"></div>
-        </div>
-
+      <div *ngIf="toast.type === 'success'" class="progress-bar">
+        <div class="progress-fill"></div>
       </div>
     </div>
-  }
-}
+  </div>
+</div>
