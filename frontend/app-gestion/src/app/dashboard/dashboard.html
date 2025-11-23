@@ -77,7 +77,7 @@
     </div>
 
     <!-- Panel de clima -->
-    <div class="clima-panel">
+    <div class="clima-panel climate-safe">
       <div class="clima-info">
         <div class="clima-icon">
           <svg *ngIf="clima.icono === 'sunny'" width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="sunny">
@@ -251,7 +251,7 @@
                 <td>{{ v.modelo || '-' }}</td>
                 <td>{{ v.marca || '-' }}</td>
                 <td>{{ v.created_at ? (v.created_at | date:'dd/MM/yyyy HH:mm') : 'N/A' }}</td>
-                <td><button (click)="eliminarVehiculo(v.id)" class="btn-danger">Eliminar</button></td>
+                <td></td>
               </tr>
             </tbody>
           </table>
@@ -327,7 +327,6 @@
             <td>{{ v.created_at ? (v.created_at | date:'dd/MM/yyyy HH:mm') : 'N/A' }}</td>
             <td>
               <div class="acciones-boton">
-                <button (click)="eliminarVehiculo(v.id)" class="btn-danger">Eliminar</button>
               </div>
             </td>
           </tr>
@@ -380,7 +379,6 @@
             <td>
               <div class="acciones-boton">
                 <button (click)="verPosiciones(r.id)" class="btn-info">Ver Posiciones</button>
-                <button (click)="iniciarSeguimientoRecorrido(r.id)" class="btn-success">Seguimiento</button>
                 <button (click)="finalizarRecorrido(r.id)" class="btn-warning">Finalizar</button>
               </div>
             </td>
@@ -435,7 +433,6 @@
             <td>
               <div class="acciones-boton">
                 <button (click)="verDetalleRuta(ruta.id)" class="btn-info">Ver Detalle</button>
-                <button (click)="iniciarSeguimientoRuta(ruta.id)" class="btn-success">Seguimiento</button>
               </div>
             </td>
           </tr>

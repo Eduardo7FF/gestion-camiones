@@ -1,10 +1,10 @@
-import { Component, OnInit, signal, computed, effect } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-// Tipos basados en la documentación del API del profesor
+// =================== TIPOS BASADOS EN LA DOCUMENTACIÓN OFICIAL ===================
 type Vehiculo = {
   id: string;
   perfil_id: string;
@@ -48,6 +48,18 @@ type Posicion = {
   capturado_ts: string;
 };
 
+type Clima = {
+  ciudad: string;
+  temperatura: number;
+  condicion: string;
+  humedad: number;
+  velocidadViento: number;
+  presion: number;
+  visibilidad: number;
+  probabilidadLluvia: number;
+  icono: string;
+};
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -57,16 +69,25 @@ type Posicion = {
 })
 export class DashboardComponent implements OnInit {
   
-  // Configuración del API
-  private readonly API_URL = '/api'; // Usando proxy
-  readonly PERFIL_ID = '747b8d3d-bb13-434e-a497-46ea96fba6c7'; // Reemplaza con tu UUID
+  // =================== CONFIGURACIÓN DEL API ===================
+  private readonly API_URL = '/api';
+  readonly PERFIL_ID = '747b8d3d-bb13-434e-a497-46ea96fba6c7';
+  private readonly WEATHER_API_KEY = 'e80d2a63e53d157428a22f9bde6c4ee1';
+  private readonly WEATHER_API_URL = 'https://api.openweathermap.org/data/2.5/weather';
 
-  // UI
+  // =================== UI STATE ===================
   menuAbierto = signal(true);
   tab = signal<'inicio' | 'vehiculos' | 'recorridos' | 'rutas' | 'calles' | 'administracion'>('inicio');
   usuarioNombre = '';
+  
+  // Estados de carga
+  cargandoVehiculos = signal(false);
+  cargandoRutas = signal(false);
+  cargandoCalles = signal(false);
+  cargandoRecorridos = signal(false);
+  cargandoClima = signal(false);
 
-  // Datos del API
+  // =================== DATOS DEL API ===================
   vehiculos: Vehiculo[] = [];
   rutas: Ruta[] = [];
   calles: Calle[] = [];
@@ -74,37 +95,31 @@ export class DashboardComponent implements OnInit {
   posiciones: Posicion[] = [];
 
   // =================== DATOS CLIMÁTICOS ===================
-  clima = {
-    temperatura: 28,
-    condicion: 'soleado',
-    humedad: 75,
-    velocidadViento: 8,
-    presion: 1013,
-    visibilidad: 10,
-    probabilidadLluvia: 10,
+  clima: Clima = {
+    ciudad: 'Buenaventura',
+    temperatura: 0,
+    condicion: 'Cargando...',
+    humedad: 0,
+    velocidadViento: 0,
+    presion: 0,
+    visibilidad: 0,
+    probabilidadLluvia: 0,
     icono: 'sunny'
   };
 
-  // =================== DATOS DEL SISTEMA ===================
-  fechaActual = new Date();
-  horaActual = new Date();
-
   // =================== FILTROS Y PAGINACIÓN ===================
-  
-  // Filtros
   filtroVehiculos = signal('');
   filtroCalles = signal('');
   filtroRutas = signal('');
   filtroRecorridos = signal('');
 
-  // Paginación
   paginaVehiculos = signal(1);
   paginaCalles = signal(1);
   paginaRutas = signal(1);
   paginaRecorridos = signal(1);
   itemsPorPagina = 10;
 
-  // Datos filtrados y paginados
+  // Computed signals para datos filtrados y paginados
   vehiculosFiltrados = computed(() => {
     const filtro = this.filtroVehiculos().toLowerCase();
     return this.vehiculos.filter(v => 
@@ -177,8 +192,8 @@ export class DashboardComponent implements OnInit {
   modalCrearVehiculoAbierto = false;
   modalCrearRutaAbierta = false;
   modalCalleAbierto = false;
+  modalEditarVehiculoAbierto = false;
   
-  // Datos para nuevos elementos
   vehiculoNuevo = {
     placa: '',
     marca: '',
@@ -186,74 +201,119 @@ export class DashboardComponent implements OnInit {
     activo: true
   };
 
+  vehiculoEditando: Vehiculo | null = null;
+
   rutaNueva = {
     nombre_ruta: '',
-    color_hex: '#25D366'
+    color_hex: '#25D366',
+    calles_ids: [] as string[]
   };
 
-  // Datos para mostrar detalles
   calleSeleccionada: Calle | null = null;
 
-  // =================== FUNCIONES DE SEGUIMIENTO ===================
-  // Datos para seguimiento en tiempo real
+  // =================== SEGUIMIENTO EN TIEMPO REAL ===================
   recorridoEnCurso: Recorrido | null = null;
   posicionesEnTiempoReal: Posicion[] = [];
   intervaloActualizacion: any = null;
   
-  // Para el mapa (simulación)
   mapaVisible = false;
   rutaSeleccionada: Ruta | null = null;
   
-  // Selección de elementos para administración
   rutaSeleccionadaId = '';
   vehiculoSeleccionadoId = '';
+
+  coordenadasSimuladas: [number, number][] = [];
+  indiceSimulacion = 0;
+  simulacionActiva = false;
 
   // =================== SISTEMA DE NOTIFICACIONES ===================
   notificacion = signal<{ mensaje: string; tipo: 'success' | 'error' | 'info' | 'warning' } | null>(null);
 
   mostrarNotificacion(mensaje: string, tipo: 'success' | 'error' | 'info' | 'warning' = 'info') {
     this.notificacion.set({ mensaje, tipo });
-    setTimeout(() => this.notificacion.set(null), 3000);
+    setTimeout(() => this.notificacion.set(null), 4000);
   }
 
-  constructor(private router: Router, private http: HttpClient) {
-    // Actualizar hora cada segundo
-    effect(() => {
-      this.horaActual = new Date();
-    });
-  }
+  constructor(private router: Router, private http: HttpClient) {}
 
   ngOnInit(): void {
     const u = localStorage.getItem('usuario');
     this.usuarioNombre = u ? JSON.parse(u).name || JSON.parse(u).nombre || 'Usuario' : 'Usuario';
     
-    // Cargar datos del API
+    // Cargar datos iniciales
+    this.cargarTodosDatos();
+    
+    // Cargar clima real
+    this.obtenerClimaReal();
+  }
+
+  // =================== CARGAR TODOS LOS DATOS ===================
+  cargarTodosDatos() {
     this.cargarVehiculos();
     this.cargarRutas();
     this.cargarCalles();
     this.cargarRecorridos();
+  }
+
+  // =================== CLIMA REAL (OpenWeatherMap) ===================
+  obtenerClimaReal() {
+    this.cargandoClima.set(true);
     
-    // Iniciar actualización del clima real para Buenaventura
-    this.obtenerClimaRealBuenaventura();
+    // Coordenadas de Buenaventura, Colombia
+    const lat = 3.8801;
+    const lon = -77.0315;
+    
+    const url = `${this.WEATHER_API_URL}?lat=${lat}&lon=${lon}&appid=${this.WEATHER_API_KEY}&units=metric&lang=es`;
+    
+    this.http.get<any>(url).subscribe({
+      next: (data) => {
+        this.clima = {
+          ciudad: data.name || 'Buenaventura',
+          temperatura: Math.round(data.main.temp),
+          condicion: data.weather[0].description,
+          humedad: data.main.humidity,
+          velocidadViento: Math.round(data.wind.speed * 3.6), // m/s a km/h
+          presion: data.main.pressure,
+          visibilidad: Math.round(data.visibility / 1000), // metros a km
+          probabilidadLluvia: data.rain ? data.rain['1h'] || 0 : 0,
+          icono: this.mapearIconoClima(data.weather[0].main)
+        };
+        this.cargandoClima.set(false);
+      },
+      error: (error) => {
+        console.error('Error al obtener clima:', error);
+        this.clima = {
+          ciudad: 'Buenaventura',
+          temperatura: 28,
+          condicion: 'No disponible',
+          humedad: 75,
+          velocidadViento: 8,
+          presion: 1013,
+          visibilidad: 10,
+          probabilidadLluvia: 0,
+          icono: 'sunny'
+        };
+        this.cargandoClima.set(false);
+        this.mostrarNotificacion('No se pudo cargar el clima actual', 'warning');
+      }
+    });
   }
 
-  // Obtener clima real para Buenaventura (datos fijos pero realistas)
-  obtenerClimaRealBuenaventura() {
-    // Datos climáticos reales y constantes para Buenaventura, Colombia
-    // Basados en condiciones climáticas reales de la región
-    this.clima = {
-      temperatura: 28, // °C - Promedio real de Buenaventura
-      condicion: 'soleado', // Condiciones predominantes en la costa
-      humedad: 75, // % - Humedad relativa típica
-      velocidadViento: 8, // km/h - Velocidad promedio
-      presion: 1013, // hPa - Presión atmosférica estándar
-      visibilidad: 10, // km - Visibilidad promedio
-      probabilidadLluvia: 10, // % - Baja probabilidad (regiones costeras)
-      icono: 'sunny' // Icono adecuado
+  mapearIconoClima(condicion: string): string {
+    const mapeo: { [key: string]: string } = {
+      'Clear': 'sunny',
+      'Clouds': 'cloudy',
+      'Rain': 'rainy',
+      'Drizzle': 'rainy',
+      'Thunderstorm': 'stormy',
+      'Snow': 'rainy',
+      'Mist': 'cloudy',
+      'Fog': 'cloudy'
     };
+    return mapeo[condicion] || 'sunny';
   }
 
-  // Headers sin autorización Bearer (según la documentación)
+  // =================== HEADERS HTTP ===================
   private getHeaders(): HttpHeaders {
     return new HttpHeaders({
       'Content-Type': 'application/json'
@@ -262,18 +322,61 @@ export class DashboardComponent implements OnInit {
 
   // =================== VEHÍCULOS ===================
   cargarVehiculos() {
+    this.cargandoVehiculos.set(true);
+    
     this.http.get<any>(`${this.API_URL}/vehiculos?perfil_id=${this.PERFIL_ID}`, {
       headers: this.getHeaders()
     }).subscribe({
       next: (response) => {
         const data = response.data || response || [];
         this.vehiculos = Array.isArray(data) ? data : [];
-        console.log('Vehículos cargados:', this.vehiculos);
+        this.cargandoVehiculos.set(false);
       },
       error: (error) => {
         console.error('Error al cargar vehículos:', error);
         this.vehiculos = [];
+        this.cargandoVehiculos.set(false);
         this.mostrarNotificacion('Error al cargar vehículos', 'error');
+      }
+    });
+  }
+
+  crearVehiculo(vehiculoData: Partial<Vehiculo>) {
+    const data = {
+      ...vehiculoData,
+      perfil_id: this.PERFIL_ID
+    };
+
+    this.http.post<any>(`${this.API_URL}/vehiculos`, data, {
+      headers: this.getHeaders()
+    }).subscribe({
+      next: () => {
+        this.mostrarNotificacion('Vehículo creado correctamente', 'success');
+        this.cargarVehiculos();
+      },
+      error: (error) => {
+        console.error('Error al crear vehículo:', error);
+        this.mostrarNotificacion('Error al crear el vehículo', 'error');
+      }
+    });
+  }
+
+  actualizarVehiculo(id: string, vehiculoData: Partial<Vehiculo>) {
+    const data = {
+      ...vehiculoData,
+      perfil_id: this.PERFIL_ID
+    };
+
+    this.http.put<any>(`${this.API_URL}/vehiculos/${id}`, data, {
+      headers: this.getHeaders()
+    }).subscribe({
+      next: () => {
+        this.mostrarNotificacion('Vehículo actualizado correctamente', 'success');
+        this.cargarVehiculos();
+      },
+      error: (error) => {
+        console.error('Error al actualizar vehículo:', error);
+        this.mostrarNotificacion('Error al actualizar el vehículo', 'error');
       }
     });
   }
@@ -281,21 +384,22 @@ export class DashboardComponent implements OnInit {
   eliminarVehiculo(id: string) {
     if (!confirm('¿Estás seguro de eliminar este vehículo?')) return;
 
-    // CORRECCIÓN: El perfil_id debe ir como parámetro en la URL
+    // Según la documentación: DELETE /api/vehiculos/{id}?perfil_id={uuid}
     this.http.delete(`${this.API_URL}/vehiculos/${id}?perfil_id=${this.PERFIL_ID}`, {
-      headers: this.getHeaders()
+      headers: this.getHeaders(),
+      observe: 'response'
     }).subscribe({
-      next: () => {
+      next: (response) => {
+        // La API devuelve 204 (No Content) cuando se elimina correctamente
         this.mostrarNotificacion('Vehículo eliminado correctamente', 'success');
         this.cargarVehiculos();
       },
       error: (error) => {
         console.error('Error al eliminar vehículo:', error);
-        // Mostrar mensaje más específico
         if (error.status === 404) {
           this.mostrarNotificacion('Vehículo no encontrado', 'error');
         } else if (error.status === 403) {
-          this.mostrarNotificacion('Acceso denegado para eliminar este vehículo', 'error');
+          this.mostrarNotificacion('No tienes permiso para eliminar este vehículo', 'error');
         } else {
           this.mostrarNotificacion('Error al eliminar el vehículo', 'error');
         }
@@ -303,7 +407,7 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  // =================== CREAR NUEVO VEHÍCULO ===================
+  // =================== MODALES DE VEHÍCULOS ===================
   abrirModalCrearVehiculo() {
     this.modalCrearVehiculoAbierto = true;
     this.vehiculoNuevo = {
@@ -328,87 +432,100 @@ export class DashboardComponent implements OnInit {
     this.cerrarModalCrearVehiculo();
   }
 
-  crearVehiculo(vehiculoData: Partial<Vehiculo>) {
-    const data = {
-      ...vehiculoData,
-      perfil_id: this.PERFIL_ID
-    };
-
-    this.http.post<any>(`${this.API_URL}/vehiculos`, data, {
-      headers: this.getHeaders()
-    }).subscribe({
-      next: (response) => {
-        this.mostrarNotificacion('Vehículo creado correctamente', 'success');
-        this.cargarVehiculos();
-      },
-      error: (error) => {
-        console.error('Error al crear vehículo:', error);
-        this.mostrarNotificacion('Error al crear el vehículo', 'error');
-      }
-    });
+  abrirModalEditarVehiculo(vehiculo: Vehiculo) {
+    this.vehiculoEditando = { ...vehiculo };
+    this.modalEditarVehiculoAbierto = true;
   }
 
-  // =================== ACTUALIZAR VEHÍCULO ===================
-  actualizarVehiculo(id: string, vehiculoData: Partial<Vehiculo>) {
-    const data = {
-      ...vehiculoData,
-      perfil_id: this.PERFIL_ID
-    };
+  cerrarModalEditarVehiculo() {
+    this.modalEditarVehiculoAbierto = false;
+    this.vehiculoEditando = null;
+  }
 
-    this.http.put<any>(`${this.API_URL}/vehiculos/${id}`, data, {
-      headers: this.getHeaders()
-    }).subscribe({
-      next: (response) => {
-        this.mostrarNotificacion('Vehículo actualizado correctamente', 'success');
-        this.cargarVehiculos();
-      },
-      error: (error) => {
-        console.error('Error al actualizar vehículo:', error);
-        this.mostrarNotificacion('Error al actualizar el vehículo', 'error');
-      }
-    });
+  guardarEdicionVehiculo() {
+    if (!this.vehiculoEditando) return;
+    
+    if (!this.vehiculoEditando.placa.trim()) {
+      this.mostrarNotificacion('La placa es requerida', 'error');
+      return;
+    }
+
+    this.actualizarVehiculo(this.vehiculoEditando.id, this.vehiculoEditando);
+    this.cerrarModalEditarVehiculo();
   }
 
   // =================== RUTAS ===================
   cargarRutas() {
+    this.cargandoRutas.set(true);
+    
     this.http.get<any>(`${this.API_URL}/rutas?perfil_id=${this.PERFIL_ID}`, {
       headers: this.getHeaders()
     }).subscribe({
       next: (response) => {
         const data = response.data || response || [];
         this.rutas = Array.isArray(data) ? data : [];
-        console.log('Rutas cargadas:', this.rutas);
+        this.cargandoRutas.set(false);
       },
       error: (error) => {
         console.error('Error al cargar rutas:', error);
         this.rutas = [];
+        this.cargandoRutas.set(false);
         this.mostrarNotificacion('Error al cargar rutas', 'error');
       }
     });
   }
 
   verDetalleRuta(id: string) {
-    // CORRECCIÓN: El perfil_id debe ir como parámetro en la URL
+    // Según la documentación: GET /api/rutas/{id}?perfil_id={uuid}
     this.http.get<any>(`${this.API_URL}/rutas/${id}?perfil_id=${this.PERFIL_ID}`, {
       headers: this.getHeaders()
     }).subscribe({
       next: (ruta) => {
         console.log('Detalle de ruta:', ruta);
+        const info = `Ruta: ${ruta.nombre_ruta}\nColor: ${ruta.color_hex || 'N/A'}\nCreada: ${ruta.created_at ? new Date(ruta.created_at).toLocaleDateString() : 'N/A'}`;
+        alert(info);
         this.mostrarNotificacion(`Ruta: ${ruta.nombre_ruta}`, 'info');
       },
       error: (error) => {
         console.error('Error al obtener detalle de ruta:', error);
-        this.mostrarNotificacion('Error al cargar el detalle de la ruta', 'error');
+        if (error.status === 403) {
+          this.mostrarNotificacion('No tienes permiso para ver esta ruta', 'error');
+        } else if (error.status === 404) {
+          this.mostrarNotificacion('Ruta no encontrada', 'error');
+        } else {
+          this.mostrarNotificacion('Error al cargar el detalle de la ruta', 'error');
+        }
       }
     });
   }
 
-  // =================== CREAR NUEVA RUTA ===================
+  crearRuta(rutaData: { nombre_ruta: string; color_hex?: string; shape?: string; calles_ids?: string[] }) {
+    const data = {
+      ...rutaData,
+      perfil_id: this.PERFIL_ID
+    };
+
+    this.http.post<any>(`${this.API_URL}/rutas`, data, {
+      headers: this.getHeaders()
+    }).subscribe({
+      next: () => {
+        this.mostrarNotificacion('Ruta creada correctamente', 'success');
+        this.cargarRutas();
+      },
+      error: (error) => {
+        console.error('Error al crear ruta:', error);
+        this.mostrarNotificacion('Error al crear la ruta', 'error');
+      }
+    });
+  }
+
+  // =================== MODALES DE RUTAS ===================
   abrirModalCrearRuta() {
     this.modalCrearRutaAbierta = true;
     this.rutaNueva = {
       nombre_ruta: '',
-      color_hex: '#25D366'
+      color_hex: '#25D366',
+      calles_ids: []
     };
   }
 
@@ -422,85 +539,34 @@ export class DashboardComponent implements OnInit {
       return;
     }
 
-    this.crearRuta(this.rutaNueva);
+    // Si hay calles seleccionadas, usar calles_ids, sino crear con geometría de ejemplo
+    if (this.rutaNueva.calles_ids.length > 0) {
+      this.crearRuta({
+        nombre_ruta: this.rutaNueva.nombre_ruta,
+        color_hex: this.rutaNueva.color_hex,
+        calles_ids: this.rutaNueva.calles_ids
+      });
+    } else {
+      // Crear con geometría de ejemplo
+      const geoJsonEjemplo = JSON.stringify({
+        "type": "LineString",
+        "coordinates": [
+          [-77.0315, 3.8801],
+          [-77.0320, 3.8805],
+          [-77.0325, 3.8810]
+        ]
+      });
+      
+      this.crearRuta({
+        nombre_ruta: this.rutaNueva.nombre_ruta,
+        color_hex: this.rutaNueva.color_hex,
+        shape: geoJsonEjemplo
+      });
+    }
+    
     this.cerrarModalCrearRuta();
   }
 
-  crearRuta(rutaData: Partial<Ruta>) {
-    const data = {
-      ...rutaData,
-      perfil_id: this.PERFIL_ID
-    };
-
-    this.http.post<any>(`${this.API_URL}/rutas`, data, {
-      headers: this.getHeaders()
-    }).subscribe({
-      next: (response) => {
-        this.mostrarNotificacion('Ruta creada correctamente', 'success');
-        this.cargarRutas();
-      },
-      error: (error) => {
-        console.error('Error al crear ruta:', error);
-        this.mostrarNotificacion('Error al crear la ruta', 'error');
-      }
-    });
-  }
-
-  // =================== CREAR RUTA CON GEOMETRÍA ===================
-  crearRutaConGeometria(nombreRuta: string, colorHex: string = '#25D366') {
-    const geoJsonEjemplo = JSON.stringify({
-      "type": "LineString",
-      "coordinates": [
-        [-76.5205, 3.42158],
-        [-76.5210, 3.42200],
-        [-76.5215, 3.42250]
-      ]
-    });
-
-    const data = {
-      nombre_ruta: nombreRuta,
-      perfil_id: this.PERFIL_ID,
-      shape: geoJsonEjemplo,
-      color_hex: colorHex
-    };
-
-    this.http.post<any>(`${this.API_URL}/rutas`, data, {
-      headers: this.getHeaders()
-    }).subscribe({
-      next: (response) => {
-        this.mostrarNotificacion('Ruta creada con geometría correctamente', 'success');
-        this.cargarRutas();
-      },
-      error: (error) => {
-        console.error('Error al crear ruta con geometría:', error);
-        this.manejarErrorCompleto(error, 'Crear ruta con geometría');
-      }
-    });
-  }
-
-  // =================== CREAR RUTA CON CALLES ===================
-  crearRutaConCalles(nombreRuta: string, callesIds: string[]) {
-    const data = {
-      nombre_ruta: nombreRuta,
-      perfil_id: this.PERFIL_ID,
-      calles_ids: callesIds
-    };
-
-    this.http.post<any>(`${this.API_URL}/rutas`, data, {
-      headers: this.getHeaders()
-    }).subscribe({
-      next: (response) => {
-        this.mostrarNotificacion('Ruta creada con calles correctamente', 'success');
-        this.cargarRutas();
-      },
-      error: (error) => {
-        console.error('Error al crear ruta con calles:', error);
-        this.manejarErrorCompleto(error, 'Crear ruta con calles');
-      }
-    });
-  }
-
-  // =================== USANDO CALLES EXISTENTES ===================
   crearRutaConCallesPrimeras() {
     if (this.calles.length === 0) {
       this.mostrarNotificacion('No hay calles disponibles para crear una ruta', 'warning');
@@ -509,47 +575,35 @@ export class DashboardComponent implements OnInit {
 
     const callesIds = this.calles.slice(0, 3).map(c => c.id);
     
-    const data = {
+    this.crearRuta({
       nombre_ruta: 'Ruta con Calles Primeras',
-      perfil_id: this.PERFIL_ID,
+      color_hex: '#25D366',
       calles_ids: callesIds
-    };
-
-    this.http.post<any>(`${this.API_URL}/rutas`, data, {
-      headers: this.getHeaders()
-    }).subscribe({
-      next: (response) => {
-        this.mostrarNotificacion('Ruta creada con las primeras 3 calles', 'success');
-        this.cargarRutas();
-      },
-      error: (error) => {
-        console.error('Error al crear ruta con calles:', error);
-        this.manejarErrorCompleto(error, 'Crear ruta con calles');
-      }
     });
   }
 
   // =================== CALLES ===================
   cargarCalles() {
+    this.cargandoCalles.set(true);
+    
     this.http.get<any>(`${this.API_URL}/calles`).subscribe({
       next: (response) => {
         const data = response.data || response || [];
         this.calles = Array.isArray(data) ? data : [];
-        console.log('Calles cargadas:', this.calles.length);
+        this.cargandoCalles.set(false);
       },
       error: (error) => {
         console.error('Error al cargar calles:', error);
         this.calles = [];
+        this.cargandoCalles.set(false);
         this.mostrarNotificacion('Error al cargar calles', 'error');
       }
     });
   }
 
-  // =================== CALLES ===================
   verDetalleCalle(id: string) {
     this.http.get<Calle>(`${this.API_URL}/calles/${id}`).subscribe({
       next: (calle) => {
-        console.log('Detalle de calle:', calle);
         this.calleSeleccionada = calle;
         this.modalCalleAbierto = true;
       },
@@ -567,18 +621,42 @@ export class DashboardComponent implements OnInit {
 
   // =================== RECORRIDOS ===================
   cargarRecorridos() {
+    this.cargandoRecorridos.set(true);
+    
     this.http.get<any>(`${this.API_URL}/misrecorridos?perfil_id=${this.PERFIL_ID}`, {
       headers: this.getHeaders()
     }).subscribe({
       next: (response) => {
         const data = response.data || response || [];
         this.recorridos = Array.isArray(data) ? data : [];
-        console.log('Recorridos cargados:', this.recorridos);
+        this.cargandoRecorridos.set(false);
       },
       error: (error) => {
         console.error('Error al cargar recorridos:', error);
         this.recorridos = [];
+        this.cargandoRecorridos.set(false);
         this.mostrarNotificacion('Error al cargar recorridos', 'error');
+      }
+    });
+  }
+
+  iniciarRecorrido(rutaId: string, vehiculoId: string) {
+    const data = {
+      ruta_id: rutaId,
+      vehiculo_id: vehiculoId,
+      perfil_id: this.PERFIL_ID
+    };
+
+    this.http.post<any>(`${this.API_URL}/recorridos/iniciar`, data, {
+      headers: this.getHeaders()
+    }).subscribe({
+      next: () => {
+        this.mostrarNotificacion('Recorrido iniciado correctamente', 'success');
+        this.cargarRecorridos();
+      },
+      error: (error) => {
+        console.error('Error al iniciar recorrido:', error);
+        this.mostrarNotificacion('Error al iniciar el recorrido', 'error');
       }
     });
   }
@@ -602,28 +680,6 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  // =================== INICIAR RECORRIDO ===================
-  iniciarRecorrido(rutaId: string, vehiculoId: string) {
-    const data = {
-      ruta_id: rutaId,
-      vehiculo_id: vehiculoId,
-      perfil_id: this.PERFIL_ID
-    };
-
-    this.http.post<any>(`${this.API_URL}/recorridos/iniciar`, data, {
-      headers: this.getHeaders()
-    }).subscribe({
-      next: (response) => {
-        this.mostrarNotificacion('Recorrido iniciado correctamente', 'success');
-        this.cargarRecorridos();
-      },
-      error: (error) => {
-        console.error('Error al iniciar recorrido:', error);
-        this.manejarErrorCompleto(error, 'Iniciar recorrido');
-      }
-    });
-  }
-
   // =================== POSICIONES ===================
   verPosiciones(recorridoId: string) {
     this.http.get<any>(`${this.API_URL}/recorridos/${recorridoId}/posiciones?perfil_id=${this.PERFIL_ID}`, {
@@ -632,7 +688,6 @@ export class DashboardComponent implements OnInit {
       next: (response) => {
         const data = response.data || response || [];
         this.posiciones = Array.isArray(data) ? data : [];
-        console.log('Posiciones del recorrido:', this.posiciones);
         
         if (this.posiciones.length === 0) {
           this.mostrarNotificacion('Este recorrido aún no tiene posiciones registradas', 'info');
@@ -647,7 +702,6 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  // =================== REGISTRAR POSICIÓN ===================
   registrarPosicion(recorridoId: string, lat: number, lon: number) {
     const data = {
       lat: lat,
@@ -658,93 +712,37 @@ export class DashboardComponent implements OnInit {
     this.http.post<any>(`${this.API_URL}/recorridos/${recorridoId}/posiciones`, data, {
       headers: this.getHeaders()
     }).subscribe({
-      next: (response) => {
+      next: () => {
         this.mostrarNotificacion('Posición registrada correctamente', 'success');
       },
       error: (error) => {
         console.error('Error al registrar posición:', error);
-        this.manejarErrorCompleto(error, 'Registrar posición');
+        this.mostrarNotificacion('Error al registrar la posición', 'error');
       }
     });
   }
 
-  // =================== FUNCIONES DE SEGUIMIENTO ===================
-  iniciarSeguimientoRecorrido(id: string) {
-    this.recorridoEnCurso = this.recorridos.find(r => r.id === id) || null;
-    
-    if (this.recorridoEnCurso) {
-      // Iniciar actualización automática de posiciones
-      this.intervaloActualizacion = setInterval(() => {
-        this.actualizarPosicionesRecorrido(id);
-      }, 5000); // Actualizar cada 5 segundos
-      
-      this.mostrarNotificacion('Seguimiento iniciado', 'success');
-    }
-  }
+  
 
-  detenerSeguimiento() {
-    if (this.intervaloActualizacion) {
-      clearInterval(this.intervaloActualizacion);
-      this.intervaloActualizacion = null;
-    }
-    this.recorridoEnCurso = null;
-    this.posicionesEnTiempoReal = [];
-    this.mapaVisible = false;
-    this.mostrarNotificacion('Seguimiento detenido', 'info');
-  }
-
-  actualizarPosicionesRecorrido(id: string) {
-    this.http.get<any>(`${this.API_URL}/recorridos/${id}/posiciones?perfil_id=${this.PERFIL_ID}`, {
-      headers: this.getHeaders()
-    }).subscribe({
-      next: (response) => {
-        const data = response.data || response || [];
-        this.posicionesEnTiempoReal = Array.isArray(data) ? data : [];
-        console.log('Posiciones actualizadas:', this.posicionesEnTiempoReal.length);
-      },
-      error: (error) => {
-        console.error('Error al actualizar posiciones:', error);
-      }
-    });
-  }
-
-  // Función para simular movimiento del vehículo en el mapa
-  moverVehiculoSimulado() {
-    if (this.recorridoEnCurso && this.posicionesEnTiempoReal.length > 0) {
-      // Aquí iría la lógica para actualizar la posición visual
-      // Esto requeriría integrar con un mapa como Google Maps o Leaflet
-      console.log('Moviendo vehículo...');
-      this.mostrarNotificacion('Vehículo movido', 'info');
-    }
-  }
-
-  // =================== FUNCIONES DE ADMINISTRACIÓN ===================
-  iniciarSeguimientoRuta(rutaId: string) {
-    // Primero obtenemos la ruta para tener datos
-    this.http.get<any>(`${this.API_URL}/rutas/${rutaId}?perfil_id=${this.PERFIL_ID}`, {
-      headers: this.getHeaders()
-    }).subscribe({
-      next: (ruta) => {
-        this.rutaSeleccionada = ruta;
-        this.mapaVisible = true;
-        this.mostrarNotificacion('Mapa de seguimiento abierto', 'info');
-      },
-      error: (error) => {
-        console.error('Error al cargar ruta:', error);
-        this.mostrarNotificacion('Error al cargar ruta para seguimiento', 'error');
-      }
-    });
-  }
-
-  // Función para crear ruta con GeoJSON (ejemplo de datos)
+  // =================== ADMINISTRACIÓN ===================
   crearRutaConEjemplo() {
-    this.crearRutaConGeometria('Ruta Ejemplo', '#FF5733');
+    const geoJsonEjemplo = JSON.stringify({
+      "type": "LineString",
+      "coordinates": [
+        [-77.0315, 3.8801],
+        [-77.0320, 3.8805],
+        [-77.0325, 3.8810]
+      ]
+    });
+
+    this.crearRuta({
+      nombre_ruta: 'Ruta Ejemplo',
+      color_hex: '#FF5733',
+      shape: geoJsonEjemplo
+    });
   }
 
-  // Función para iniciar recorrido con vehículo (ejemplo)
   iniciarRecorridoEjemplo() {
-    // Esta función se llamaría cuando seleccionas una ruta y vehículo
-    // Por ejemplo, puedes usar los primeros elementos de tus listas
     if (this.rutaSeleccionadaId && this.vehiculoSeleccionadoId) {
       this.iniciarRecorrido(this.rutaSeleccionadaId, this.vehiculoSeleccionadoId);
     } else {
@@ -752,7 +750,7 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  // =================== MÉTODOS DE PAGINACIÓN ===================
+  // =================== PAGINACIÓN ===================
   cambiarPaginaVehiculos(direccion: number) {
     const nuevaPagina = this.paginaVehiculos() + direccion;
     if (nuevaPagina >= 1 && nuevaPagina <= this.totalPaginasVehiculos()) {
@@ -779,33 +777,6 @@ export class DashboardComponent implements OnInit {
     if (nuevaPagina >= 1 && nuevaPagina <= this.totalPaginasRecorridos()) {
       this.paginaRecorridos.set(nuevaPagina);
     }
-  }
-
-  // =================== FUNCIONES DE ERROR ===================
-  manejarErrorCompleto(error: any, accion: string) {
-    let mensaje = '';
-    
-    switch (error.status) {
-      case 400:
-        mensaje = 'Solicitud incorrecta';
-        break;
-      case 401:
-        mensaje = 'No autorizado';
-        break;
-      case 403:
-        mensaje = 'Acceso denegado';
-        break;
-      case 404:
-        mensaje = 'Recurso no encontrado';
-        break;
-      case 500:
-        mensaje = 'Error interno del servidor';
-        break;
-      default:
-        mensaje = error.message || 'Error desconocido';
-    }
-    
-    this.mostrarNotificacion(`${accion}: ${mensaje}`, 'error');
   }
 
   // =================== UI ===================
