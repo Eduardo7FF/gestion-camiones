@@ -1,3 +1,4 @@
+// src/app/toast/toast.component.ts
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { trigger, transition, style, animate } from '@angular/animations';
@@ -32,4 +33,9 @@ import { ToastService } from './toast.service';
 })
 export class ToastComponent {
   toastService = inject(ToastService);
+
+  // Función para trackBy en *ngFor (mejora rendimiento)
+  trackByFn(index: number, toast: { id: string }) {
+    return toast.id;
+  }
 }
