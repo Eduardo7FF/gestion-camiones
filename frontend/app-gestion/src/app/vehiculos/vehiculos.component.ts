@@ -1,6 +1,8 @@
-import { Component, signal, computed, OnInit } from '@angular/core';
+import { Component, signal, computed, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+// Importamos el servicio para conectar con el Backend
+import { VehiculosService } from '../services/vehiculos.service';
 
 @Component({
   selector: 'app-vehiculos',
@@ -10,18 +12,17 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./vehiculos.component.scss']
 })
 export class VehiculosComponent implements OnInit {
+  
+  // Inyección del servicio
+  private vehiculosService = inject(VehiculosService);
 
-  // Lista principal de vehículos (Signal para que la UI reaccione rápido)
+  // Estado
   vehiculos = signal<any[]>([]);
-
-  // Variables de control de la interfaz
   filtro = signal('');
   modalAbierto = signal(false);
-  
-  // Si esta variable tiene un ID, estamos editando. Si es null, estamos creando.
   vehiculoEnEdicion: string | null = null;
 
-  // Objeto del formulario (Coincide con los ngModel del HTML)
+  // Formulario
   nuevoVehiculo: any = { 
     placa: '', 
     marca: '', 
@@ -29,48 +30,26 @@ export class VehiculosComponent implements OnInit {
     activo: true 
   };
 
-  // Opciones para el select de marcas
   marcasDisponibles = [
-    'Kenworth', 
-    'Mercedes-Benz', 
-    'Volvo', 
-    'Mack', 
-    'Hino', 
-    'Isuzu', 
-    'Chevrolet', 
-    'Foton',
-    'International'
+    'Kenworth', 'Mercedes-Benz', 'Volvo', 'Mack', 
+    'Hino', 'Isuzu', 'Chevrolet', 'Foton', 'International'
   ];
 
   ngOnInit() {
-    this.cargarDeStorage();
+    this.cargarVehiculos();
   }
 
-  // --- PERSISTENCIA DE DATOS (LOCALSTORAGE) ---
-  cargarDeStorage() {
-    if (typeof localStorage !== 'undefined') {
-      const data = localStorage.getItem('mis_vehiculos');
-      if (data) {
-        this.vehiculos.set(JSON.parse(data));
-      } else {
-        // Datos de prueba iniciales para que no se vea vacío al principio
-        this.vehiculos.set([
-          { id: '1', placa: 'TUK-909', marca: 'Kenworth', modelo: 'T800', activo: true },
-          { id: '2', placa: 'SXZ-123', marca: 'Mercedes-Benz', modelo: 'Atego', activo: true },
-          { id: '3', placa: 'ABC-456', marca: 'Volvo', modelo: 'FMX', activo: false }
-        ]);
-        this.guardarEnStorage();
-      }
-    }
+  // --- 1. CARGAR (GET) DESDE BASE DE DATOS ---
+  cargarVehiculos() {
+    this.vehiculosService.getAll().subscribe({
+      next: (data) => {
+        this.vehiculos.set(data);
+      },
+      error: (err) => console.error('Error al cargar vehículos:', err)
+    });
   }
 
-  guardarEnStorage() {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('mis_vehiculos', JSON.stringify(this.vehiculos()));
-    }
-  }
-
-  // --- LÓGICA DE FILTRADO (BUSCADOR) ---
+  // --- FILTRO VISUAL ---
   vehiculosFiltrados = computed(() => {
     const term = this.filtro().toLowerCase();
     return this.vehiculos().filter(v => 
@@ -81,19 +60,15 @@ export class VehiculosComponent implements OnInit {
   });
 
   // --- GESTIÓN DEL MODAL ---
-
-  // 1. Abrir modal para CREAR un vehículo nuevo
   abrirModalCrear() {
-    this.vehiculoEnEdicion = null; // Indicamos que es creación
-    // Limpiamos el formulario
+    this.vehiculoEnEdicion = null;
     this.nuevoVehiculo = { placa: '', marca: '', modelo: '', activo: true };
     this.modalAbierto.set(true);
   }
 
-  // 2. Abrir modal para EDITAR un vehículo existente
   abrirModalEditar(vehiculo: any) {
-    this.vehiculoEnEdicion = vehiculo.id; // Guardamos el ID del que vamos a editar
-    // Copiamos los datos al formulario para que aparezcan en los inputs
+    this.vehiculoEnEdicion = vehiculo.id;
+    // Copiamos los datos para no modificar la tabla directamente
     this.nuevoVehiculo = { 
       placa: vehiculo.placa, 
       marca: vehiculo.marca, 
@@ -103,49 +78,53 @@ export class VehiculosComponent implements OnInit {
     this.modalAbierto.set(true);
   }
 
-  // Cerrar modal y limpiar estado
   cerrarModal() {
     this.modalAbierto.set(false);
     this.vehiculoEnEdicion = null;
   }
 
-  // 3. Guardar cambios (Sirve tanto para Crear como para Editar)
+  // --- 2. GUARDAR (POST / PUT) EN BASE DE DATOS ---
   guardarVehiculo() {
-    // Validación simple
     if (!this.nuevoVehiculo.placa || !this.nuevoVehiculo.marca) {
       alert('Por favor completa la Placa y la Marca.');
       return;
     }
 
     if (this.vehiculoEnEdicion) {
-      // --- LÓGICA DE ACTUALIZACIÓN ---
-      this.vehiculos.update(lista => lista.map(v => {
-        if (v.id === this.vehiculoEnEdicion) {
-          // Si encontramos el vehículo, actualizamos sus datos
-          return { ...v, ...this.nuevoVehiculo };
-        }
-        return v;
-      }));
+      // ACTUALIZAR
+      this.vehiculosService.update(this.vehiculoEnEdicion, this.nuevoVehiculo).subscribe({
+        next: (vehiculoActualizado) => {
+          // Actualizamos la lista localmente
+          this.vehiculos.update(lista => lista.map(v => 
+            v.id === this.vehiculoEnEdicion ? vehiculoActualizado : v
+          ));
+          this.cerrarModal();
+        },
+        error: (err) => alert('Error al actualizar: ' + err.message)
+      });
+
     } else {
-      // --- LÓGICA DE CREACIÓN ---
-      const nuevoObj = {
-        id: crypto.randomUUID(), // Generamos un ID único
-        ...this.nuevoVehiculo
-      };
-      // Agregamos al principio de la lista
-      this.vehiculos.update(lista => [nuevoObj, ...lista]);
+      // CREAR
+      this.vehiculosService.create(this.nuevoVehiculo).subscribe({
+        next: (vehiculoCreado) => {
+          // Agregamos el nuevo a la lista (al principio)
+          this.vehiculos.update(lista => [vehiculoCreado, ...lista]);
+          this.cerrarModal();
+        },
+        error: (err) => alert('Error al guardar: ' + err.message)
+      });
     }
-    
-    // Guardamos en memoria permanente y cerramos
-    this.guardarEnStorage();
-    this.cerrarModal();
   }
 
-  // Eliminar vehículo
+  // --- 3. ELIMINAR (DELETE) DE BASE DE DATOS ---
   eliminarVehiculo(id: string) {
     if(confirm('¿Estás seguro de que quieres eliminar este vehículo?')) {
-      this.vehiculos.update(lista => lista.filter(v => v.id !== id));
-      this.guardarEnStorage();
+      this.vehiculosService.delete(id).subscribe({
+        next: () => {
+          this.vehiculos.update(lista => lista.filter(v => v.id !== id));
+        },
+        error: (err) => alert('Error al eliminar: ' + err.message)
+      });
     }
   }
 }

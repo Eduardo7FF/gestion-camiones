@@ -3,17 +3,21 @@ import { provideRouter } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { routes } from './app.routes';
 import { FormsModule } from '@angular/forms';
-import { provideHttpClient } from '@angular/common/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 import { ToastrModule } from 'ngx-toastr';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    // 1. Rutas
     provideRouter(routes),
-    provideAnimations(),
+    
+    // 2. Animaciones (Necesario para Toastr y Material)
+    provideAnimations(), 
+    
+    // 3. Módulos antiguos importados
     importProvidersFrom(
       FormsModule,
-      BrowserAnimationsModule,
+      // Configuración de tus alertas
       ToastrModule.forRoot({
         positionClass: 'toast-top-right',
         timeOut: 3000,
@@ -23,6 +27,8 @@ export const appConfig: ApplicationConfig = {
         preventDuplicates: true
       })
     ),
-    provideHttpClient()
+    
+    // 4. Cliente HTTP Optimizado (Clave para conectar con NestJS/Supabase)
+    provideHttpClient(withFetch()) 
   ]
 };
