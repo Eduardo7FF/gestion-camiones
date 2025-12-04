@@ -1,9 +1,12 @@
 <div class="map-wrapper">
+  <!-- Contenedor del Mapa -->
   <div #mapContainer class="map-container"></div>
 
+  <!-- Panel Flotante de Control -->
   <div class="control-panel">
     <h3>Planificador de Rutas</h3>
     
+    <!-- Estadísticas (Solo visibles si hay ruta) -->
     <div class="stats-grid" *ngIf="rutaGeometria.length > 0">
       <div class="stat">
         <span class="label">Distancia</span>
@@ -16,49 +19,151 @@
     </div>
 
     <div class="actions">
+      
+      <!-- ✅ NUEVO: Botón para Mostrar/Ocultar Calles Externas -->
+      <button 
+        class="btn-calles-externas"
+        [class.active]="mostrandoCallesExternas()"
+        [disabled]="cargandoCalles()"
+        (click)="toggleCallesExternas()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        <span *ngIf="!cargandoCalles()">
+          {{ mostrandoCallesExternas() ? 'Ocultar Calles (985)' : 'Mostrar Calles (985)' }}
+        </span>
+        <span *ngIf="cargandoCalles()">Cargando...</span>
+      </button>
+
+      <!-- PASO 1: CREAR RUTA -->
       <button 
         *ngIf="rutaGeometria.length === 0 && !modoCreacion()" 
         class="btn-primary" 
         (click)="activarModoCreacion()">
-        📍 Nueva Ruta
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        Nueva Ruta
       </button>
 
+      <!-- Instrucciones -->
       <div *ngIf="modoCreacion()" class="instruction">
-        <span *ngIf="!origen">Clic para <b>Inicio (A)</b></span>
-        <span *ngIf="origen && !destino">Clic para <b>Destino (B)</b></span>
+        <span *ngIf="!origen">Haz clic en el mapa para el <b>Inicio (A)</b></span>
+        <span *ngIf="origen && !destino">Ahora clic para el <b>Destino (B)</b></span>
       </div>
 
-      <div class="vehicle-select-group" *ngIf="rutaGeometria.length > 0 && !animando()">
-        <label>Asignar Vehículo:</label>
-        <select [ngModel]="vehiculoSeleccionadoId()" (ngModelChange)="vehiculoSeleccionadoId.set($event)">
-          <option value="" disabled selected>-- Elegir conductor --</option>
-          <option *ngFor="let v of vehiculosDisponibles()" [value]="v.id">
-            {{ v.placa }} - {{ v.marca }}
-          </option>
-        </select>
-      </div>
+      <!-- PASO 2: OPCIONES DE RUTA (Solo si hay ruta trazada y no se está animando) -->
+      <ng-container *ngIf="rutaGeometria.length > 0 && !animando()">
+        
+        <!-- Guardar en Base de Datos (Abre Modal) -->
+        <button class="btn-save" (click)="abrirModalGuardar()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+            <polyline points="7 3 7 8 15 8"></polyline>
+          </svg>
+          Guardar Ruta y Horario
+        </button>
 
-      <button 
-        *ngIf="rutaGeometria.length > 0 && !animando()" 
-        class="btn-success" 
-        [disabled]="!vehiculoSeleccionadoId()"
-        (click)="iniciarSimulacion()">
-        ▶ Iniciar Viaje
+        <!-- Selector de Vehículo (Traído del Backend) -->
+        <div class="vehicle-select-group">
+          <label>Asignar Vehículo:</label>
+          <select [ngModel]="vehiculoSeleccionadoId()" (ngModelChange)="vehiculoSeleccionadoId.set($event)">
+            <option value="" disabled selected>-- Seleccionar --</option>
+            <option *ngFor="let v of vehiculosDisponibles()" [value]="v.id">
+              {{ v.placa }} - {{ v.marca }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Iniciar Simulación -->
+        <button 
+          class="btn-success" 
+          [disabled]="!vehiculoSeleccionadoId()"
+          (click)="iniciarSimulacion()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          Iniciar Viaje
+        </button>
+
+        <!-- Limpiar Mapa -->
+        <button class="btn-secondary" (click)="limpiarMapa()">
+          Limpiar Todo
+        </button>
+
+      </ng-container>
+
+      <!-- PASO 3: DURANTE LA SIMULACIÓN -->
+      <button *ngIf="animando()" class="btn-danger" (click)="animando.set(false)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+          <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+        </svg>
+        Detener Simulación
       </button>
 
-      <button 
-        *ngIf="animando()" 
-        class="btn-danger" 
-        (click)="animando.set(false)">
-        ⏹ Detener
-      </button>
-
-      <button 
-        *ngIf="rutaGeometria.length > 0" 
-        class="btn-secondary" 
-        (click)="limpiarMapa()">
-        Limpiar
-      </button>
     </div>
+  </div>
+</div>
+
+<!-- MODAL DE GUARDADO DE RUTA Y HORARIOS -->
+<div class="modal-overlay" *ngIf="modalGuardarAbierto()" (click)="cerrarModalGuardar()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    
+    <div class="modal-header">
+      <h2>Guardar Ruta</h2>
+      <button class="close-btn" (click)="cerrarModalGuardar()">✕</button>
+    </div>
+
+    <div class="input-group">
+      <label>NOMBRE DE LA RUTA</label>
+      <input type="text" [(ngModel)]="nuevaRutaForm.nombre" placeholder="Ej: Ruta Centro - Norte">
+    </div>
+
+    <div class="input-group">
+      <label>HORA DE INICIO</label>
+      <input type="time" [(ngModel)]="nuevaRutaForm.horaInicio">
+    </div>
+
+    <div class="days-group">
+      <label>DÍAS DE RECOLECCIÓN</label>
+      <div class="days-grid">
+        <label class="day-checkbox">
+          <input type="checkbox" [(ngModel)]="nuevaRutaForm.dias.lunes">
+          <span class="day-circle">L</span>
+        </label>
+        <label class="day-checkbox">
+          <input type="checkbox" [(ngModel)]="nuevaRutaForm.dias.martes">
+          <span class="day-circle">M</span>
+        </label>
+        <label class="day-checkbox">
+          <input type="checkbox" [(ngModel)]="nuevaRutaForm.dias.miercoles">
+          <span class="day-circle">M</span>
+        </label>
+        <label class="day-checkbox">
+          <input type="checkbox" [(ngModel)]="nuevaRutaForm.dias.jueves">
+          <span class="day-circle">J</span>
+        </label>
+        <label class="day-checkbox">
+          <input type="checkbox" [(ngModel)]="nuevaRutaForm.dias.viernes">
+          <span class="day-circle">V</span>
+        </label>
+        <label class="day-checkbox">
+          <input type="checkbox" [(ngModel)]="nuevaRutaForm.dias.sabado">
+          <span class="day-circle">S</span>
+        </label>
+        <label class="day-checkbox">
+          <input type="checkbox" [(ngModel)]="nuevaRutaForm.dias.domingo">
+          <span class="day-circle">D</span>
+        </label>
+      </div>
+    </div>
+
+    <button class="btn-save-modal" (click)="confirmarGuardarRuta()">
+      Confirmar Guardado
+    </button>
+
   </div>
 </div>
