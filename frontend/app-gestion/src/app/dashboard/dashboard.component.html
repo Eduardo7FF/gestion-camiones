@@ -1,0 +1,144 @@
+<div class="wrap">
+  
+  <aside class="sidebar" [class.closed]="!menuAbierto()">
+    
+    <div class="brand">
+      <div class="brand-logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="1" y="3" width="15" height="13"></rect>
+          <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+          <circle cx="5.5" cy="18.5" r="2.5"></circle>
+          <circle cx="18.5" cy="18.5" r="2.5"></circle>
+        </svg>
+      </div>
+      <div class="brand-text">Gestion<span class="highlight">Truck</span></div>
+      
+      <button class="burger" (click)="toggleMenu()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <nav class="menu">
+      
+      <a (click)="setTab('inicio')" [class.active]="tab() === 'inicio'">
+        <div class="icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+        </div>
+        <span>Inicio</span>
+      </a>
+
+      <a (click)="setTab('vehiculos')" [class.active]="tab() === 'vehiculos'">
+        <div class="icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="3" width="15" height="13"></rect>
+            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+            <circle cx="5.5" cy="18.5" r="2.5"></circle>
+            <circle cx="18.5" cy="18.5" r="2.5"></circle>
+          </svg>
+        </div>
+        <span>Vehículos</span>
+      </a>
+
+      <a (click)="setTab('rutas')" [class.active]="tab() === 'rutas'">
+        <div class="icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+            <line x1="8" y1="2" x2="8" y2="18"></line>
+            <line x1="16" y1="6" x2="16" y2="22"></line>
+          </svg>
+        </div>
+        <span>Rutas</span>
+      </a>
+
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="avatar">{{ usuarioNombre.charAt(0) }}</div>
+        <div class="user-info">
+          <strong>{{ usuarioNombre }}</strong>
+          <small>Administrador</small>
+        </div>
+      </div>
+      <button class="logout-btn" (click)="logout()" title="Cerrar sesión">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content" [class.expanded]="!menuAbierto()">
+    
+    <header class="top-bar">
+      <div class="breadcrumbs">
+        <span class="root">App</span>
+        <span class="separator">/</span>
+        <span class="current" *ngIf="tab() === 'inicio'">Resumen</span>
+        <span class="current" *ngIf="tab() === 'vehiculos'">Flota</span>
+        <span class="current" *ngIf="tab() === 'rutas'">Mapa</span>
+      </div>
+    </header>
+
+    <div class="content-area">
+
+      <div *ngIf="tab() === 'inicio'" class="welcome-container fade-in">
+        <div class="hero-section">
+          <h1>Hola, {{ usuarioNombre }} 👋</h1>
+          <p>Bienvenido a <strong>GestionTruck</strong>. Resumen operativo.</p>
+        </div>
+
+        <div class="widgets-grid">
+          <div class="widget-card" (click)="setTab('vehiculos')">
+            <div class="widget-icon green">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="1" y="3" width="15" height="13"></rect>
+                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                <circle cx="18.5" cy="18.5" r="2.5"></circle>
+              </svg>
+            </div>
+            <div class="widget-content">
+              <h3>Vehículos</h3>
+              <p>Gestionar flota</p>
+            </div>
+            <div class="arrow">→</div>
+          </div>
+
+          <div class="widget-card" (click)="setTab('rutas')">
+            <div class="widget-icon blue">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+                <line x1="8" y1="2" x2="8" y2="18"></line>
+                <line x1="16" y1="6" x2="16" y2="22"></line>
+              </svg>
+            </div>
+            <div class="widget-content">
+              <h3>Mapa en Vivo</h3>
+              <p>Planificar rutas</p>
+            </div>
+            <div class="arrow">→</div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="tab() === 'vehiculos'" class="fade-in">
+        <app-vehiculos></app-vehiculos>
+      </div>
+
+      <div *ngIf="tab() === 'rutas'" class="fade-in" style="height: 100%;">
+        <app-mapa-rutas></app-mapa-rutas>
+      </div>
+
+    </div>
+  </main>
+</div>

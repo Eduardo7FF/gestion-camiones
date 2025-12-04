@@ -1,0 +1,64 @@
+<div class="map-wrapper">
+  <div #mapContainer class="map-container"></div>
+
+  <div class="control-panel">
+    <h3>Planificador de Rutas</h3>
+    
+    <div class="stats-grid" *ngIf="rutaGeometria.length > 0">
+      <div class="stat">
+        <span class="label">Distancia</span>
+        <span class="value">{{ distancia() }}</span>
+      </div>
+      <div class="stat">
+        <span class="label">Tiempo est.</span>
+        <span class="value">{{ duracion() }}</span>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button 
+        *ngIf="rutaGeometria.length === 0 && !modoCreacion()" 
+        class="btn-primary" 
+        (click)="activarModoCreacion()">
+        📍 Nueva Ruta
+      </button>
+
+      <div *ngIf="modoCreacion()" class="instruction">
+        <span *ngIf="!origen">Clic para <b>Inicio (A)</b></span>
+        <span *ngIf="origen && !destino">Clic para <b>Destino (B)</b></span>
+      </div>
+
+      <div class="vehicle-select-group" *ngIf="rutaGeometria.length > 0 && !animando()">
+        <label>Asignar Vehículo:</label>
+        <select [ngModel]="vehiculoSeleccionadoId()" (ngModelChange)="vehiculoSeleccionadoId.set($event)">
+          <option value="" disabled selected>-- Elegir conductor --</option>
+          <option *ngFor="let v of vehiculosDisponibles()" [value]="v.id">
+            {{ v.placa }} - {{ v.marca }}
+          </option>
+        </select>
+      </div>
+
+      <button 
+        *ngIf="rutaGeometria.length > 0 && !animando()" 
+        class="btn-success" 
+        [disabled]="!vehiculoSeleccionadoId()"
+        (click)="iniciarSimulacion()">
+        ▶ Iniciar Viaje
+      </button>
+
+      <button 
+        *ngIf="animando()" 
+        class="btn-danger" 
+        (click)="animando.set(false)">
+        ⏹ Detener
+      </button>
+
+      <button 
+        *ngIf="rutaGeometria.length > 0" 
+        class="btn-secondary" 
+        (click)="limpiarMapa()">
+        Limpiar
+      </button>
+    </div>
+  </div>
+</div>
