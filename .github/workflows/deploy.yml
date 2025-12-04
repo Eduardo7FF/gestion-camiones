@@ -32,7 +32,7 @@ jobs:
 
       # Construir Angular
       - name: Build Angular
-        run: npm run build -- --configuration production --base-href 
+        run: npm run build -- --configuration production --base-href /
         working-directory: ./frontend/app-gestion
 
       # Configurar SSH
