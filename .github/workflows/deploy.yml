@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Clonar el repositorio
+      # Clonar repositorio
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -20,14 +20,10 @@ jobs:
         with:
           node-version: '20'
 
-      #  Ir a la carpeta del frontend
-      - name: Move to frontend folder
-        run: cd frontend/app-gestion
-        shell: bash
-
-      #  Crear environment.ts (Necesario para Angular)
+      # Crear environment.ts dentro del frontend
       - name: Create environment.ts
         run: |
+          mkdir -p frontend/app-gestion/src/environments
           echo "export const environment = {" > frontend/app-gestion/src/environments/environment.ts
           echo "  production: true," >> frontend/app-gestion/src/environments/environment.ts
           echo "  supabaseUrl: '${{ secrets.SUPABASE_URL }}'," >> frontend/app-gestion/src/environments/environment.ts
@@ -37,27 +33,27 @@ jobs:
       # Instalar dependencias
       - name: Install dependencies
         run: npm install
-        working-directory: ./frontend/app-gestion
+        working-directory: frontend/app-gestion
 
       # Construir Angular
       - name: Build Angular
         run: npm run build -- --configuration production --base-href /
-        working-directory: ./frontend/app-gestion
+        working-directory: frontend/app-gestion
 
-      # Configurar SSH
+      # Activar SSH
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
 
-      # Subir archivos al servidor
+      # Desplegar al servidor
       - name: Deploy to server
         run: |
-          echo " Subiendo frontend al servidor..."
-          echo " Limpiando carpeta remota..."
-          ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_SERVER }} 'rm -rf /var/www/carlos_site/*'
-          
-          echo " Copiando archivos nuevos..."
-          scp -o StrictHostKeyChecking=no -r frontend/app-gestion/dist/app-gestion/browser/* ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_SERVER }}:/var/www/carlos_site/
-          
-          echo " Frontend desplegado correctamente en /var/www/carlos_site/"
+          echo "Limpiando carpeta del servidor..."
+          ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_SERVER }} "rm -rf /var/www/carlos_site/*"
+
+          echo "Copiando archivos..."
+          scp -o StrictHostKeyChecking=no -r frontend/app-gestion/dist/app-gestion/browser/* \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_SERVER }}:/var/www/carlos_site/
+
+          echo "¡Frontend desplegado correctamente!"
