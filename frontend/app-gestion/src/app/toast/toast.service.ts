@@ -1,10 +1,12 @@
 import { Injectable, signal } from '@angular/core';
 
+export type ToastType = 'success' | 'error' | 'warning' | 'info';
+
 export interface ToastMessage {
-  id: string;
+  id: number;
   message: string;
-  type: 'success' | 'error' | 'warning' | 'info';
-  duration?: number;
+  type: ToastType;
+  duration: number;
 }
 
 @Injectable({
@@ -12,22 +14,37 @@ export interface ToastMessage {
 })
 export class ToastService {
   toasts = signal<ToastMessage[]>([]);
+  private idCounter = 0;
 
-  showToast(message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info', duration = 3500) {
-    const id = Date.now().toString();
+  showToast(message: string, type: ToastType = 'info', duration: number = 3000) {
+    const id = this.idCounter++;
     const toast: ToastMessage = { id, message, type, duration };
     
-    // Solo muestra un toast a la vez
-    this.toasts.set([toast]);
+    this.toasts.update(current => [...current, toast]);
 
-    if (duration > 0) {
-      setTimeout(() => {
-        this.removeToast(id);
-      }, duration);
-    }
+    setTimeout(() => {
+      this.removeToast(id);
+    }, duration);
   }
 
-  removeToast(id: string) {
-    this.toasts.update(toasts => toasts.filter(t => t.id !== id));
+  removeToast(id: number) {
+    this.toasts.update(current => current.filter(t => t.id !== id));
+  }
+
+  // Métodos de conveniencia
+  success(message: string, duration: number = 3000) {
+    this.showToast(message, 'success', duration);
+  }
+
+  error(message: string, duration: number = 3000) {
+    this.showToast(message, 'error', duration);
+  }
+
+  warning(message: string, duration: number = 3000) {
+    this.showToast(message, 'warning', duration);
+  }
+
+  info(message: string, duration: number = 3000) {
+    this.showToast(message, 'info', duration);
   }
 }
