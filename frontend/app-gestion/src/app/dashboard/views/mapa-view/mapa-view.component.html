@@ -1,0 +1,250 @@
+<div class="mapa-container">
+  
+  <!-- PANEL LATERAL -->
+  <aside class="sidebar-panel" [class.closed]="!panelRutasAbierto()">
+    
+    <!-- HEADER DEL PANEL -->
+    <div class="panel-header">
+      <div class="header-content">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5z"/>
+        </svg>
+        <h2 *ngIf="panelRutasAbierto()">Rutas</h2>
+      </div>
+      <button class="btn-toggle" (click)="togglePanelRutas()" [title]="panelRutasAbierto() ? 'Ocultar panel' : 'Mostrar panel'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline [attr.points]="panelRutasAbierto() ? '15 18 9 12 15 6' : '9 18 15 12 9 6'"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- CONTENIDO DEL PANEL -->
+    <div *ngIf="panelRutasAbierto()" class="panel-content">
+      
+      <!-- ACCIONES RÁPIDAS -->
+      <div class="actions-section">
+        <button class="action-btn primary" (click)="activarModoCreacion()" [disabled]="modoCreacion()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>Nueva Ruta</span>
+        </button>
+
+        <button class="action-btn secondary" (click)="toggleCallesExternas()" [class.active]="mostrandoCallesExternas()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/>
+          </svg>
+          <span>{{ mostrandoCallesExternas() ? 'Ocultar' : 'Mostrar' }} 985 Calles</span>
+        </button>
+      </div>
+
+      <!-- INSTRUCCIONES EN MODO CREACIÓN -->
+      <div *ngIf="modoCreacion()" class="creation-instructions">
+        <div class="instruction-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+        </div>
+        <div class="instruction-content">
+          <p class="instruction-title">Modo Creación Activo</p>
+          <ul class="instruction-list">
+            <li><strong>Click izquierdo:</strong> Agregar punto</li>
+            <li><strong>Click derecho:</strong> Finalizar ruta</li>
+          </ul>
+          <p class="instruction-points">Puntos agregados: <strong>{{ puntosRuta.length }}</strong></p>
+        </div>
+      </div>
+
+      <!-- INFO DE RUTA TEMPORAL -->
+      <div *ngIf="rutaGeometria.length > 0" class="ruta-temporal-info">
+        <div class="info-header">
+          <h3>Ruta Temporal</h3>
+          <button class="btn-save" (click)="abrirModalGuardar()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            Guardar
+          </button>
+        </div>
+        <div class="stats-row">
+          <div class="stat-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5z"/>
+            </svg>
+            <div>
+              <span class="label">Distancia</span>
+              <span class="value">{{ distancia() }}</span>
+            </div>
+          </div>
+          <div class="stat-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <div>
+              <span class="label">Duración</span>
+              <span class="value">{{ duracion() }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="route-details">
+          <p class="detail-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>Puntos en ruta: <strong>{{ rutaGeometria.length }}</strong></span>
+          </p>
+        </div>
+        <button class="btn-clear" (click)="limpiarMapa()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+          Limpiar Ruta
+        </button>
+      </div>
+
+      <!-- LISTA DE RUTAS GUARDADAS -->
+      <div class="rutas-section">
+        <h3 class="section-title">Rutas Guardadas ({{ rutasExistentes().length }})</h3>
+        
+        <div *ngIf="rutasExistentes().length === 0" class="empty-rutas">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5z"/>
+          </svg>
+          <p>No hay rutas guardadas</p>
+        </div>
+
+        <div class="rutas-list">
+          <div *ngFor="let ruta of rutasExistentes()" class="ruta-item">
+            <div class="ruta-color" [style.background]="ruta.color_hex || '#10b981'"></div>
+            <div class="ruta-info">
+              <h4>{{ ruta.nombre_ruta }}</h4>
+              <p *ngIf="ruta.descripcion">{{ ruta.descripcion }}</p>
+            </div>
+            <button class="btn-view" (click)="verRuta(ruta)" title="Ver en mapa">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- MAPA -->
+  <div class="map-wrapper">
+    <div #mapContainer class="map-container"></div>
+    
+    <!-- LOADING OVERLAY -->
+    <div *ngIf="cargandoCalles()" class="loading-overlay">
+      <div class="spinner"></div>
+      <p>Cargando 985 calles...</p>
+    </div>
+  </div>
+
+  <!-- MODAL GUARDAR RUTA -->
+  <div *ngIf="modalGuardarAbierto()" class="modal-overlay" (click)="cerrarModalGuardar()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      
+      <div class="modal-header">
+        <h2>Guardar Nueva Ruta</h2>
+        <button class="btn-close" (click)="cerrarModalGuardar()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="nombre">Nombre de la Ruta <span class="required">*</span></label>
+          <input
+            id="nombre"
+            type="text"
+            [(ngModel)]="nuevaRutaForm.nombre"
+            placeholder="Ej: Ruta Centro Histórico"
+            maxlength="100"
+          />
+        </div>
+
+        <!-- SELECTOR DE VEHÍCULOS -->
+        <div class="form-group">
+          <label>Vehículos Asignados ({{ vehiculosSeleccionados.length }})</label>
+          
+          <div *ngIf="vehiculosDisponibles().length === 0" class="empty-vehiculos">
+            <p>No hay vehículos disponibles. Ve a la sección de Vehículos para crear uno.</p>
+          </div>
+
+          <div *ngIf="vehiculosDisponibles().length > 0" class="vehiculos-list">
+            <button
+              *ngFor="let vehiculo of vehiculosDisponibles()"
+              type="button"
+              class="vehiculo-item"
+              [class.selected]="isVehiculoSeleccionado(vehiculo.id)"
+              (click)="toggleVehiculo(vehiculo.id)"
+            >
+              <div class="vehiculo-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 17h14v-5H5v5zM3 19h18v2H3v-2zm0-8h18V9H3v2zm0-4h18V5H3v2z"/>
+                  <circle cx="7" cy="17" r="2"/>
+                  <circle cx="17" cy="17" r="2"/>
+                </svg>
+              </div>
+              <div class="vehiculo-info">
+                <span class="vehiculo-placa">{{ vehiculo.placa }}</span>
+                <span class="vehiculo-detalles">{{ vehiculo.marca }} {{ vehiculo.modelo }}</span>
+              </div>
+              <div class="vehiculo-check">
+                <svg *ngIf="isVehiculoSeleccionado(vehiculo.id)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+            </button>
+          </div>
+
+          <small class="form-hint">Selecciona los vehículos que usarán esta ruta</small>
+        </div>
+
+        <div class="route-summary">
+          <div class="summary-item">
+            <span class="label">Distancia:</span>
+            <span class="value">{{ distancia() }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Duración:</span>
+            <span class="value">{{ duracion() }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Puntos:</span>
+            <span class="value">{{ rutaGeometria.length }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="cerrarModalGuardar()">Cancelar</button>
+        <button class="btn-primary" (click)="confirmarGuardarRuta()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+            <polyline points="7 3 7 8 15 8"></polyline>
+          </svg>
+          <span>Guardar Ruta</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>

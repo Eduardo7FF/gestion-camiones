@@ -31,7 +31,11 @@
             ],
             "styles": [
               "src/styles.scss",
-              "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
+              "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
+              "node_modules/mapbox-gl/dist/mapbox-gl.css"
+            ],
+            "scripts": [
+              "node_modules/mapbox-gl/dist/mapbox-gl.js"
             ]
           },
           "configurations": {
@@ -65,8 +69,7 @@
               "buildTarget": "app-gestion:build:production"
             },
             "development": {
-              "buildTarget": "app-gestion:build:development",
-              "proxyConfig": "proxy.conf.json"
+              "buildTarget": "app-gestion:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -91,7 +94,11 @@
             ],
             "styles": [
               "src/styles.scss",
-              "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
+              "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
+              "node_modules/mapbox-gl/dist/mapbox-gl.css"
+            ],
+            "scripts": [
+              "node_modules/mapbox-gl/dist/mapbox-gl.js"
             ]
           }
         }

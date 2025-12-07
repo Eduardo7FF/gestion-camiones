@@ -7,8 +7,19 @@ import { ToastComponent } from './toast/toast.component';
   standalone: true,
   imports: [RouterOutlet, ToastComponent],
   template: `
-    <app-toast></app-toast>
-    <router-outlet></router-outlet>
-  `
+    <div class="app">
+      <app-toast #toastRef></app-toast>
+      <router-outlet></router-outlet>
+    </div>
+  `,
+  styles: [`
+    .app {
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+    }
+  `]
 })
-export class App {}
+export class App {
+  // Este método no es necesario en Angular 17+, pero lo dejamos para compatibilidad
+}

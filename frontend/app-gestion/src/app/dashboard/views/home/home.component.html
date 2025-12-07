@@ -1,0 +1,50 @@
+<div class="home-container">
+  
+  <!-- HEADER -->
+  <header class="page-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p class="subtitle">Resumen general del sistema de gestión de camiones</p>
+    </div>
+  </header>
+
+  <!-- LOADING STATE -->
+  <div *ngIf="loading()" class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando estadísticas...</p>
+  </div>
+
+  <!-- STATS CARDS -->
+  <div *ngIf="!loading()" class="stats-grid">
+    <div 
+      *ngFor="let stat of stats()" 
+      class="stat-card"
+      [style.--card-color]="stat.color"
+    >
+      <div class="stat-icon" [style.background]="stat.title === 'Total Vehículos' ? 'rgba(16, 185, 129, 0.1)' : stat.color + '15'">
+        <!-- Icono de CAMIÓN VERDE para Total Vehículos -->
+        <svg *ngIf="stat.title === 'Total Vehículos'" viewBox="0 0 28 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="4" width="14" height="12" rx="1"/>
+          <path d="M16 8h3l3 2v6h-3"/>
+          <circle cx="6" cy="17" r="1.5"/>
+          <circle cx="18" cy="17" r="1.5"/>
+        </svg>
+        <!-- Otros iconos con fill (Material Icons) -->
+        <svg *ngIf="stat.title !== 'Total Vehículos'" viewBox="0 0 24 24" [attr.fill]="stat.color">
+          <path [attr.d]="stat.icon"/>
+        </svg>
+      </div>
+      
+      <div class="stat-content">
+        <p class="stat-title">{{ stat.title }}</p>
+        <h2 class="stat-value">{{ stat.value }}</h2>
+        <p *ngIf="stat.change" class="stat-change" [class.positive]="stat.changeType === 'positive'" [class.negative]="stat.changeType === 'negative'">
+          <span class="change-icon" *ngIf="stat.changeType === 'positive'">↗</span>
+          <span class="change-icon" *ngIf="stat.changeType === 'negative'">↘</span>
+          {{ stat.change }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>

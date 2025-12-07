@@ -1,62 +1,155 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Importante para directivas como *ngIf
+import { Component, inject, signal, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
-import { Router } from '@angular/router';
-
-// Asegúrate de que la ruta a estos servicios sea correcta
+import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { ToastService } from '../toast/toast.service';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
-  // CORRECCIÓN: Apuntando a los nombres de archivo estándar
+  imports: [CommonModule, FormsModule],
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.scss']
 })
-export class LandingComponent {
+export class LandingComponent implements OnInit {
   correo = '';
   contrasena = '';
+  modoRegistro = signal(false);
+  mostrarContrasena = signal(false);
   
-  // Inyección de servicios
-  private toastService = inject(ToastService);
+  // Modales de recuperación
+  modalRecuperacion = signal(false);
+  modalNuevaContrasena = signal(false);
+  correoRecuperacion = '';
+  nuevaContrasena = '';
+  confirmarContrasena = '';
+  
+  toastService = inject(ToastService); 
   private auth = inject(AuthService);
-  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
-  onLogin() {
-    // Validación simple antes de enviar
+  ngOnInit() {
+    // Detectar si viene del link de recuperación
+    this.route.fragment.subscribe(fragment => {
+      if (fragment && fragment.includes('type=recovery')) {
+        this.modalNuevaContrasena.set(true);
+      }
+    });
+  }
+
+  async onLogin() {
     if (!this.correo || !this.contrasena) {
-      this.toastService.showToast('Por favor completa todos los campos', 'warning', 3000);
+      this.toastService.warning('Completa todos los campos', 3000);
+      return;
+    }
+    await this.auth.loginWithEmail(this.correo, this.contrasena);
+  }
+
+  async onRegister() {
+    if (!this.correo || !this.contrasena) {
+      this.toastService.warning('Completa todos los campos', 3000);
       return;
     }
 
-    const datos = { email: this.correo, password: this.contrasena };
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.correo)) {
+      this.toastService.error('Ingresa un correo electrónico válido', 3000);
+      return;
+    }
 
-    this.auth.login(datos).subscribe({
-      next: (res: any) => {
-        if (res.message === 'Login exitoso' || res.token) {
-          this.toastService.showToast('¡Inicio de sesión exitoso!', 'success', 2000);
-          
-          // Guardar usuario y token si viene en la respuesta
-          localStorage.setItem('usuario', JSON.stringify(res.user));
-          if (res.token) localStorage.setItem('token', res.token);
-          
-          // Redirigir al dashboard un poco más rápido (2s es suficiente para leer el toast)
-          setTimeout(() => {
-            this.router.navigate(['/dashboard']);
-          }, 2000);
-        } else {
-          this.toastService.showToast('Correo o contraseña incorrectos', 'error', 3000);
-        }
-      },
-      error: (err) => {
-        console.error('Error de login:', err);
-        // Manejo de errores específicos si el backend los envía
-        const mensaje = err.error?.message || 'Ocurrió un error al iniciar sesión';
-        this.toastService.showToast(mensaje, 'error', 3000);
-      }
-    });
+    const dominiosComunes = ['gmail.com', 'outlook.com', 'hotmail.com', 'yahoo.com', 'icloud.com', 'live.com', 'mail.com'];
+    const dominio = this.correo.split('@')[1]?.toLowerCase();
+    
+    if (dominio && !dominiosComunes.includes(dominio)) {
+      this.toastService.warning('⚠️ Asegúrate de usar tu correo real para poder recuperar tu contraseña', 3500);
+    }
+
+    if (this.contrasena.length < 6) {
+      this.toastService.warning('La contraseña debe tener al menos 6 caracteres', 3000);
+      return;
+    }
+
+    const success = await this.auth.register(this.correo, this.contrasena);
+    if (success) {
+      this.modoRegistro.set(false);
+      this.correo = '';
+      this.contrasena = '';
+    }
+  }
+
+  toggleModo() {
+    this.modoRegistro.set(!this.modoRegistro());
+    this.correo = '';
+    this.contrasena = '';
+  }
+
+  toggleMostrarContrasena() {
+    this.mostrarContrasena.set(!this.mostrarContrasena());
+  }
+
+  async onGoogleLogin() {
+    await this.auth.loginWithGoogle();
+  }
+
+  async onGitHubLogin() {
+    await this.auth.loginWithGitHub();
+  }
+
+  // RECUPERACIÓN DE CONTRASEÑA
+  abrirModalRecuperacion() {
+    this.correoRecuperacion = '';
+    this.modalRecuperacion.set(true);
+  }
+
+  cerrarModalRecuperacion() {
+    this.modalRecuperacion.set(false);
+    this.correoRecuperacion = '';
+  }
+
+  async enviarEmailRecuperacion() {
+    if (!this.correoRecuperacion) {
+      this.toastService.warning('Escribe tu correo electrónico', 3000);
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.correoRecuperacion)) {
+      this.toastService.error('Ingresa un correo válido', 3000);
+      return;
+    }
+
+    const success = await this.auth.resetPassword(this.correoRecuperacion);
+    if (success) {
+      this.cerrarModalRecuperacion();
+    }
+  }
+
+  cerrarModalNuevaContrasena() {
+    this.modalNuevaContrasena.set(false);
+    this.nuevaContrasena = '';
+    this.confirmarContrasena = '';
+  }
+
+  async actualizarContrasena() {
+    if (!this.nuevaContrasena || !this.confirmarContrasena) {
+      this.toastService.warning('Completa todos los campos', 3000);
+      return;
+    }
+
+    if (this.nuevaContrasena.length < 6) {
+      this.toastService.warning('La contraseña debe tener al menos 6 caracteres', 3000);
+      return;
+    }
+
+    if (this.nuevaContrasena !== this.confirmarContrasena) {
+      this.toastService.error('Las contraseñas no coinciden', 3000);
+      return;
+    }
+
+    const success = await this.auth.updatePassword(this.nuevaContrasena);
+    if (success) {
+      this.cerrarModalNuevaContrasena();
+    }
   }
 }
