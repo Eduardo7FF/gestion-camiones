@@ -33,47 +33,21 @@ export class MapaViewComponent implements AfterViewInit, OnDestroy {
   duracion = signal('0 min');
   modalGuardarAbierto = signal(false);
   rutasExistentes = signal<any[]>([]);
+  panelRutasAbierto = signal(true);
   mostrandoCallesExternas = signal(false);
   cargandoCalles = signal(false);
-  panelRutasAbierto = signal(true);
-  
-  vehiculosDisponibles = signal<any[]>([]);
-  vehiculosSeleccionados: string[] = [];
 
   nuevaRutaForm = {
-    nombre: '',
-    descripcion: '',
-    color: '#10b981'
+    nombre: ''
   };
-
-  coloresDisponibles = [
-    { nombre: 'Verde', valor: '#10b981' },
-    { nombre: 'Azul', valor: '#3B82F6' },
-    { nombre: 'Rojo', valor: '#EF4444' },
-    { nombre: 'Morado', valor: '#8B5CF6' },
-    { nombre: 'Naranja', valor: '#F59E0B' },
-    { nombre: 'Rosa', valor: '#EC4899' }
-  ];
 
   ngAfterViewInit() {
     this.cargarMapbox();
     this.cargarRutasExistentes();
-    this.cargarVehiculos();
   }
 
   ngOnDestroy() {
     if (this.map) this.map.remove();
-  }
-
-  cargarVehiculos() {
-    this.apiService.getVehiculos().subscribe({
-      next: (data) => {
-        this.vehiculosDisponibles.set(Array.isArray(data) ? data : []);
-      },
-      error: (err) => {
-        console.error('Error cargando vehículos:', err);
-      }
-    });
   }
 
   cargarRutasExistentes() {
@@ -158,28 +132,57 @@ export class MapaViewComponent implements AfterViewInit, OnDestroy {
     this.map.on('contextmenu', this.contextMenuHandler);
     
     this.map.getCanvas().style.cursor = 'crosshair';
-    this.toastService.showToast('Click en el mapa para agregar puntos. Click derecho para terminar', 'info', 4000);
+  }
+
+  cancelarModoCreacion() {
+    this.modoCreacion.set(false);
+    this.limpiarMapa();
+    
+    if (this.clickHandler) {
+      this.map.off('click', this.clickHandler);
+    }
+    if (this.contextMenuHandler) {
+      this.map.off('contextmenu', this.contextMenuHandler);
+    }
+    
+    this.map.getCanvas().style.cursor = '';
   }
 
   agregarPuntoRuta(coords: { lng: number, lat: number }) {
     const punto = [coords.lng, coords.lat];
     this.puntosRuta.push(punto);
     
-    const numeroMarker = this.puntosRuta.length;
-    this.crearMarcador(punto, numeroMarker.toString(), this.getColorMarker(numeroMarker));
+    const esPrimerPunto = this.puntosRuta.length === 1;
+    this.crearMarcadorUbicacion(punto, esPrimerPunto ? '#10b981' : '#3B82F6');
     
-    if (this.puntosRuta.length === 1) {
+    if (esPrimerPunto) {
       this.toastService.showToast('Punto inicial marcado', 'success', 2000);
     } else {
-      this.toastService.showToast(`Punto ${numeroMarker} agregado`, 'success', 1500);
+      this.toastService.showToast(`Punto ${this.puntosRuta.length} agregado`, 'success', 1500);
       this.dibujarRutaParcial();
     }
   }
 
-  getColorMarker(numero: number): string {
-    if (numero === 1) return '#10b981';
-    if (numero === this.puntosRuta.length && this.puntosRuta.length > 1) return '#EF4444';
-    return '#3B82F6';
+  crearMarcadorUbicacion(lngLat: number[], color: string) {
+    const el = document.createElement('div');
+    el.className = 'custom-marker-ubicacion';
+    el.innerHTML = `
+      <svg width="32" height="40" viewBox="0 0 24 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 0C5.373 0 0 5.373 0 12c0 9 12 18 12 18s12-9 12-18c0-6.627-5.373-12-12-12z" fill="${color}"/>
+        <circle cx="12" cy="12" r="5" fill="white"/>
+      </svg>
+    `;
+    el.style.cursor = 'pointer';
+
+    const lng = parseFloat(lngLat[0]?.toString() || '0');
+    const lat = parseFloat(lngLat[1]?.toString() || '0');
+    
+    if (isNaN(lng) || isNaN(lat)) return;
+
+    const marker = new mapboxgl.Marker({ element: el, anchor: 'bottom' })
+      .setLngLat([lng, lat])
+      .addTo(this.map);
+    this.markers.push(marker);
   }
 
   async dibujarRutaParcial() {
@@ -266,16 +269,14 @@ export class MapaViewComponent implements AfterViewInit, OnDestroy {
         
         this.map.getCanvas().style.cursor = '';
         
-        if (this.markers.length >= 2) {
-          const inicio = this.puntosRuta[0];
-          const fin = this.puntosRuta[this.puntosRuta.length - 1];
-          
-          this.markers.forEach(m => m.remove());
-          this.markers = [];
-          
-          this.crearMarcadorEspecial(inicio, 'INICIO', '#10b981');
-          this.crearMarcadorEspecial(fin, 'FIN', '#EF4444');
-        }
+        const inicio = this.puntosRuta[0];
+        const fin = this.puntosRuta[this.puntosRuta.length - 1];
+        
+        this.markers.forEach(m => m.remove());
+        this.markers = [];
+        
+        this.crearMarcadorEspecial(inicio, 'INICIO', '#10b981');
+        this.crearMarcadorEspecial(fin, 'FIN', '#EF4444');
         
         if (this.map.getLayer('ruta-temporal')) {
           this.map.setPaintProperty('ruta-temporal', 'line-color', '#10b981');
@@ -296,32 +297,6 @@ export class MapaViewComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  crearMarcador(lngLat: number[], texto: string, color: string) {
-    const el = document.createElement('div');
-    el.className = 'custom-marker';
-    el.style.backgroundColor = color;
-    el.style.width = '36px';
-    el.style.height = '36px';
-    el.style.borderRadius = '50%';
-    el.style.display = 'flex';
-    el.style.alignItems = 'center';
-    el.style.justifyContent = 'center';
-    el.style.color = 'white';
-    el.style.fontWeight = '700';
-    el.style.fontSize = '14px';
-    el.style.boxShadow = '0 3px 10px rgba(0,0,0,0.3)';
-    el.style.border = '3px solid white';
-    el.innerText = texto;
-
-    const lng = parseFloat(lngLat[0]?.toString() || '0');
-    const lat = parseFloat(lngLat[1]?.toString() || '0');
-    
-    if (isNaN(lng) || isNaN(lat)) return;
-
-    const marker = new mapboxgl.Marker(el).setLngLat([lng, lat]).addTo(this.map);
-    this.markers.push(marker);
-  }
-
   crearMarcadorEspecial(lngLat: number[], texto: string, color: string) {
     const el = document.createElement('div');
     el.className = 'custom-marker-special';
@@ -334,32 +309,6 @@ export class MapaViewComponent implements AfterViewInit, OnDestroy {
     el.style.boxShadow = '0 3px 12px rgba(0,0,0,0.35)';
     el.style.border = '2px solid white';
     el.style.whiteSpace = 'nowrap';
-    el.innerText = texto;
-
-    const lng = parseFloat(lngLat[0]?.toString() || '0');
-    const lat = parseFloat(lngLat[1]?.toString() || '0');
-    
-    if (isNaN(lng) || isNaN(lat)) return;
-
-    const marker = new mapboxgl.Marker(el).setLngLat([lng, lat]).addTo(this.map);
-    this.markers.push(marker);
-  }
-
-  crearMarcadorRecorrido(lngLat: number[], texto: string, color: string) {
-    const el = document.createElement('div');
-    el.className = 'custom-marker-recorrido';
-    el.style.backgroundColor = color;
-    el.style.width = '28px';
-    el.style.height = '28px';
-    el.style.borderRadius = '50%';
-    el.style.display = 'flex';
-    el.style.alignItems = 'center';
-    el.style.justifyContent = 'center';
-    el.style.color = 'white';
-    el.style.fontWeight = '700';
-    el.style.fontSize = '12px';
-    el.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
-    el.style.border = '2px solid white';
     el.innerText = texto;
 
     const lng = parseFloat(lngLat[0]?.toString() || '0');
@@ -425,6 +374,7 @@ export class MapaViewComponent implements AfterViewInit, OnDestroy {
     });
   }
 
+  // ========== CALLES EXTERNAS ==========
   toggleCallesExternas() {
     if (this.mostrandoCallesExternas()) {
       this.ocultarCallesExternas();
@@ -439,7 +389,7 @@ export class MapaViewComponent implements AfterViewInit, OnDestroy {
     this.apiService.getCallesExternas().subscribe({
       next: (calles) => {
         if (calles.length === 0) {
-          this.toastService.showToast('No hay calles', 'warning', 3000);
+          this.toastService.showToast('No hay calles disponibles', 'warning', 3000);
           this.cargandoCalles.set(false);
           return;
         }
@@ -503,6 +453,7 @@ export class MapaViewComponent implements AfterViewInit, OnDestroy {
       this.map.removeSource('calles-externas');
     }
     this.mostrandoCallesExternas.set(false);
+    this.toastService.showToast('Calles ocultadas', 'info', 2000);
   }
 
   abrirModalGuardar() {
@@ -510,15 +461,12 @@ export class MapaViewComponent implements AfterViewInit, OnDestroy {
       this.toastService.showToast('Debes trazar una ruta primero', 'warning', 3000);
       return;
     }
-    
-    this.vehiculosSeleccionados = [];
     this.modalGuardarAbierto.set(true);
   }
 
   cerrarModalGuardar() {
     this.modalGuardarAbierto.set(false);
-    this.nuevaRutaForm = { nombre: '', descripcion: '', color: '#10b981' };
-    this.vehiculosSeleccionados = [];
+    this.nuevaRutaForm = { nombre: '' };
   }
 
   confirmarGuardarRuta() {
@@ -529,21 +477,17 @@ export class MapaViewComponent implements AfterViewInit, OnDestroy {
 
     const rutaPayload = {
       nombre_ruta: this.nuevaRutaForm.nombre,
-      descripcion: this.nuevaRutaForm.descripcion || '',
       shape: JSON.stringify({
         type: 'LineString',
         coordinates: this.rutaGeometria
-      }),
-      vehiculos: this.vehiculosSeleccionados
+      })
     };
 
-    const colorSeleccionado = this.nuevaRutaForm.color;
-
     this.apiService.crearRuta(rutaPayload).subscribe({
-      next: (response: any) => {
-        this.toastService.showToast(`Ruta guardada con ${this.vehiculosSeleccionados.length} vehículos asignados`, 'success', 3000);
+      next: () => {
+        this.toastService.showToast('Ruta guardada correctamente', 'success', 3000);
         this.cerrarModalGuardar();
-        this.limpiarMapaYMantenerRutas();
+        this.limpiarMapa();
         
         setTimeout(() => {
           this.cargarRutasExistentes();
@@ -554,39 +498,6 @@ export class MapaViewComponent implements AfterViewInit, OnDestroy {
         this.toastService.showToast('Error al guardar', 'error', 3000);
       }
     });
-  }
-
-  toggleVehiculo(vehiculoId: string) {
-    const index = this.vehiculosSeleccionados.indexOf(vehiculoId);
-    if (index > -1) {
-      this.vehiculosSeleccionados.splice(index, 1);
-    } else {
-      this.vehiculosSeleccionados.push(vehiculoId);
-    }
-  }
-
-  isVehiculoSeleccionado(vehiculoId: string): boolean {
-    return this.vehiculosSeleccionados.includes(vehiculoId);
-  }
-
-  limpiarMapaYMantenerRutas() {
-    this.puntosRuta = [];
-    this.rutaGeometria = [];
-    this.distancia.set('0 km');
-    this.duracion.set('0 min');
-    
-    this.markers.forEach(m => m.remove());
-    this.markers = [];
-    
-    if (this.map && this.map.getSource('ruta-temporal')) {
-      this.map.getSource('ruta-temporal').setData({
-        type: 'Feature',
-        geometry: { type: 'LineString', coordinates: [] },
-        properties: {}
-      });
-    }
-
-    this.map.getCanvas().style.cursor = '';
   }
 
   limpiarMapa() {
@@ -620,18 +531,9 @@ export class MapaViewComponent implements AfterViewInit, OnDestroy {
         this.markers = [];
 
         const coordinates = geometry.coordinates;
-        const totalPuntos = coordinates.length;
-        const step = Math.max(1, Math.floor(totalPuntos / 15));
         
         this.crearMarcadorEspecial(coordinates[0], 'INICIO', '#10b981');
-        
-        let contador = 1;
-        for (let i = step; i < totalPuntos - step; i += step) {
-          this.crearMarcadorRecorrido(coordinates[i], contador.toString(), '#3B82F6');
-          contador++;
-        }
-        
-        this.crearMarcadorEspecial(coordinates[totalPuntos - 1], 'FIN', '#EF4444');
+        this.crearMarcadorEspecial(coordinates[coordinates.length - 1], 'FIN', '#EF4444');
 
         const bounds = new mapboxgl.LngLatBounds();
         coordinates.forEach((coord: number[]) => bounds.extend(coord));
@@ -646,5 +548,12 @@ export class MapaViewComponent implements AfterViewInit, OnDestroy {
 
   togglePanelRutas() {
     this.panelRutasAbierto.set(!this.panelRutasAbierto());
+    
+    // Redimensionar mapa después de la transición
+    setTimeout(() => {
+      if (this.map) {
+        this.map.resize();
+      }
+    }, 350);
   }
 }

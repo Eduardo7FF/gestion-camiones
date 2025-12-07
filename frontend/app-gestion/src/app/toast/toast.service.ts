@@ -31,7 +31,7 @@ export class ToastService {
     this.toasts.update(current => current.filter(t => t.id !== id));
   }
 
-  // Métodos de conveniencia
+  
   success(message: string, duration: number = 3000) {
     this.showToast(message, 'success', duration);
   }

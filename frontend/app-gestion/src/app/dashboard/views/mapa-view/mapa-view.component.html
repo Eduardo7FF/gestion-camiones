@@ -5,11 +5,11 @@
     
     <!-- HEADER DEL PANEL -->
     <div class="panel-header">
-      <div class="header-content">
+      <div class="header-content" *ngIf="panelRutasAbierto()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5z"/>
         </svg>
-        <h2 *ngIf="panelRutasAbierto()">Rutas</h2>
+        <h2>Rutas</h2>
       </div>
       <button class="btn-toggle" (click)="togglePanelRutas()" [title]="panelRutasAbierto() ? 'Ocultar panel' : 'Mostrar panel'">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -21,21 +21,25 @@
     <!-- CONTENIDO DEL PANEL -->
     <div *ngIf="panelRutasAbierto()" class="panel-content">
       
-      <!-- ACCIONES RÁPIDAS -->
+      <!-- ACCIONES -->
       <div class="actions-section">
         <button class="action-btn primary" (click)="activarModoCreacion()" [disabled]="modoCreacion()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
+          <span class="btn-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </span>
           <span>Nueva Ruta</span>
         </button>
 
-        <button class="action-btn secondary" (click)="toggleCallesExternas()" [class.active]="mostrandoCallesExternas()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/>
-          </svg>
-          <span>{{ mostrandoCallesExternas() ? 'Ocultar' : 'Mostrar' }} 985 Calles</span>
+        <button class="action-btn secondary" (click)="toggleCallesExternas()" [class.active]="mostrandoCallesExternas()" [disabled]="cargandoCalles()">
+          <span class="btn-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+            </svg>
+          </span>
+          <span>{{ cargandoCalles() ? 'Cargando...' : (mostrandoCallesExternas() ? 'Ocultar' : 'Mostrar') }} 985 Calles</span>
         </button>
       </div>
 
@@ -54,7 +58,16 @@
             <li><strong>Click izquierdo:</strong> Agregar punto</li>
             <li><strong>Click derecho:</strong> Finalizar ruta</li>
           </ul>
-          <p class="instruction-points">Puntos agregados: <strong>{{ puntosRuta.length }}</strong></p>
+          <div class="instruction-footer">
+            <span class="instruction-points">Puntos: <strong>{{ puntosRuta.length }}</strong></span>
+            <button class="btn-cancel-creation" (click)="cancelarModoCreacion()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+              Cancelar
+            </button>
+          </div>
         </div>
       </div>
 
@@ -91,15 +104,6 @@
               <span class="value">{{ duracion() }}</span>
             </div>
           </div>
-        </div>
-        <div class="route-details">
-          <p class="detail-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
-            <span>Puntos en ruta: <strong>{{ rutaGeometria.length }}</strong></span>
-          </p>
         </div>
         <button class="btn-clear" (click)="limpiarMapa()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -141,11 +145,18 @@
     </div>
   </aside>
 
+  <!-- BOTÓN FLOTANTE PARA MÓVIL -->
+  <button *ngIf="!panelRutasAbierto()" class="btn-toggle-mobile" (click)="togglePanelRutas()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5z"/>
+    </svg>
+  </button>
+
   <!-- MAPA -->
   <div class="map-wrapper">
     <div #mapContainer class="map-container"></div>
     
-    <!-- LOADING OVERLAY -->
+    <!-- LOADING OVERLAY CALLES -->
     <div *ngIf="cargandoCalles()" class="loading-overlay">
       <div class="spinner"></div>
       <p>Cargando 985 calles...</p>
@@ -178,55 +189,17 @@
           />
         </div>
 
-        <!-- SELECTOR DE VEHÍCULOS -->
-        <div class="form-group">
-          <label>Vehículos Asignados ({{ vehiculosSeleccionados.length }})</label>
-          
-          <div *ngIf="vehiculosDisponibles().length === 0" class="empty-vehiculos">
-            <p>No hay vehículos disponibles. Ve a la sección de Vehículos para crear uno.</p>
-          </div>
-
-          <div *ngIf="vehiculosDisponibles().length > 0" class="vehiculos-list">
-            <button
-              *ngFor="let vehiculo of vehiculosDisponibles()"
-              type="button"
-              class="vehiculo-item"
-              [class.selected]="isVehiculoSeleccionado(vehiculo.id)"
-              (click)="toggleVehiculo(vehiculo.id)"
-            >
-              <div class="vehiculo-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M5 17h14v-5H5v5zM3 19h18v2H3v-2zm0-8h18V9H3v2zm0-4h18V5H3v2z"/>
-                  <circle cx="7" cy="17" r="2"/>
-                  <circle cx="17" cy="17" r="2"/>
-                </svg>
-              </div>
-              <div class="vehiculo-info">
-                <span class="vehiculo-placa">{{ vehiculo.placa }}</span>
-                <span class="vehiculo-detalles">{{ vehiculo.marca }} {{ vehiculo.modelo }}</span>
-              </div>
-              <div class="vehiculo-check">
-                <svg *ngIf="isVehiculoSeleccionado(vehiculo.id)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                  <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-              </div>
-            </button>
-          </div>
-
-          <small class="form-hint">Selecciona los vehículos que usarán esta ruta</small>
-        </div>
-
         <div class="route-summary">
           <div class="summary-item">
-            <span class="label">Distancia:</span>
+            <span class="label">Distancia</span>
             <span class="value">{{ distancia() }}</span>
           </div>
           <div class="summary-item">
-            <span class="label">Duración:</span>
+            <span class="label">Duración</span>
             <span class="value">{{ duracion() }}</span>
           </div>
           <div class="summary-item">
-            <span class="label">Puntos:</span>
+            <span class="label">Puntos</span>
             <span class="value">{{ rutaGeometria.length }}</span>
           </div>
         </div>
