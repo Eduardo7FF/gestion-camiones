@@ -11,6 +11,7 @@ export class AuthService {
   private supabase: SupabaseClient;
   private router = inject(Router);
   private toastService = inject(ToastService);
+  private isInitialLoad = true; // Flag para detectar carga inicial
 
   constructor() {
     this.supabase = createClient(
@@ -28,6 +29,10 @@ export class AuthService {
     if (session?.user) {
       this.saveUserToLocalStorage(session.user);
     }
+    // Después de verificar la sesión inicial, marcamos que ya no es carga inicial
+    setTimeout(() => {
+      this.isInitialLoad = false;
+    }, 1000);
   }
 
   // Listener de cambios de autenticación
@@ -39,10 +44,17 @@ export class AuthService {
         console.log('Usuario autenticado:', session.user.email);
         this.saveUserToLocalStorage(session.user);
         
-        // Toast solo para OAuth
-        const provider = session.user.app_metadata?.['provider'];
-        if (provider === 'google' || provider === 'github') {
-          this.toastService.success('Login exitoso', 2000);
+        // Solo mostrar toast si NO es la carga inicial
+        // Esto evita el toast al regresar a la página con sesión activa
+        if (!this.isInitialLoad) {
+          const provider = session.user.app_metadata?.['provider'];
+          if (provider === 'google' || provider === 'github') {
+            this.toastService.success('Login exitoso', 2000);
+            // Redirigir al dashboard solo en login nuevo
+            setTimeout(() => {
+              this.router.navigate(['/dashboard']);
+            }, 2000);
+          }
         }
       } else if (event === 'SIGNED_OUT') {
         console.log('Sesión cerrada');
