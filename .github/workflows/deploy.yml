@@ -10,50 +10,53 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Clonar repositorio
+      # 1. Clonar el repositorio
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Configurar Node.js
+      # 2. Configurar Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
 
-      # Crear environment.ts dentro del frontend
+      # 3. ¡ESTE ES EL PASO QUE FALTABA! Creación dinámica del environment
+      # Se crea con la estructura anidada "supabase: { ... }" para que no de error TS2339
       - name: Create environment.ts
         run: |
           mkdir -p frontend/app-gestion/src/environments
           echo "export const environment = {" > frontend/app-gestion/src/environments/environment.ts
           echo "  production: true," >> frontend/app-gestion/src/environments/environment.ts
-          echo "  supabaseUrl: '${{ secrets.SUPABASE_URL }}'," >> frontend/app-gestion/src/environments/environment.ts
-          echo "  supabaseKey: '${{ secrets.SUPABASE_KEY }}'" >> frontend/app-gestion/src/environments/environment.ts
+          echo "  supabase: {" >> frontend/app-gestion/src/environments/environment.ts
+          echo "    url: '${{ secrets.SUPABASE_URL }}'," >> frontend/app-gestion/src/environments/environment.ts
+          echo "    key: '${{ secrets.SUPABASE_KEY }}'" >> frontend/app-gestion/src/environments/environment.ts
+          echo "  }" >> frontend/app-gestion/src/environments/environment.ts
           echo "};" >> frontend/app-gestion/src/environments/environment.ts
 
-      # Instalar dependencias
+      # 4. Instalar dependencias
       - name: Install dependencies
         run: npm install
         working-directory: frontend/app-gestion
 
-      # Construir Angular
+      # 5. Construir Angular
       - name: Build Angular
         run: npm run build -- --configuration production --base-href /
         working-directory: frontend/app-gestion
 
-      # Activar SSH
+      # 6. Configurar SSH
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
 
-      # Desplegar al servidor
+      # 7. Subir archivos al servidor
       - name: Deploy to server
         run: |
-          echo "Limpiando carpeta del servidor..."
-          ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_SERVER }} "rm -rf /var/www/carlos_site/*"
-
-          echo "Copiando archivos..."
-          scp -o StrictHostKeyChecking=no -r frontend/app-gestion/dist/app-gestion/browser/* \
-            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_SERVER }}:/var/www/carlos_site/
-
-          echo "¡Frontend desplegado correctamente!"
+          echo "📤 Subiendo frontend al servidor..."
+          echo "🧹 Limpiando carpeta remota..."
+          ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_SERVER }} 'rm -rf /var/www/carlos_site/*'
+          
+          echo "📦 Copiando archivos nuevos..."
+          scp -o StrictHostKeyChecking=no -r frontend/app-gestion/dist/app-gestion/browser/* ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_SERVER }}:/var/www/carlos_site/
+          
+          echo "✅ Frontend desplegado correctamente"
