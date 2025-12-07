@@ -20,10 +20,19 @@ jobs:
         with:
           node-version: '20'
 
-      # 📂 Ir a la carpeta del frontend
+      #  Ir a la carpeta del frontend
       - name: Move to frontend folder
         run: cd frontend/app-gestion
         shell: bash
+
+      #  Crear environment.ts (Necesario para Angular)
+      - name: Create environment.ts
+        run: |
+          echo "export const environment = {" > frontend/app-gestion/src/environments/environment.ts
+          echo "  production: true," >> frontend/app-gestion/src/environments/environment.ts
+          echo "  supabaseUrl: '${{ secrets.SUPABASE_URL }}'," >> frontend/app-gestion/src/environments/environment.ts
+          echo "  supabaseKey: '${{ secrets.SUPABASE_KEY }}'" >> frontend/app-gestion/src/environments/environment.ts
+          echo "};" >> frontend/app-gestion/src/environments/environment.ts
 
       # Instalar dependencias
       - name: Install dependencies
@@ -44,11 +53,11 @@ jobs:
       # Subir archivos al servidor
       - name: Deploy to server
         run: |
-          echo "📤 Subiendo frontend al servidor..."
-          echo "🧹 Limpiando carpeta remota..."
+          echo " Subiendo frontend al servidor..."
+          echo " Limpiando carpeta remota..."
           ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_SERVER }} 'rm -rf /var/www/carlos_site/*'
           
-          echo "📦 Copiando archivos nuevos..."
+          echo " Copiando archivos nuevos..."
           scp -o StrictHostKeyChecking=no -r frontend/app-gestion/dist/app-gestion/browser/* ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_SERVER }}:/var/www/carlos_site/
           
-          echo "✅ Frontend desplegado correctamente en /var/www/carlos_site/"
+          echo " Frontend desplegado correctamente en /var/www/carlos_site/"
