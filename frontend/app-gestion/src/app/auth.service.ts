@@ -12,6 +12,7 @@ export class AuthService {
   private router = inject(Router);
   private toastService = inject(ToastService);
   private isInitialLoad = true; // Flag para detectar carga inicial
+  private hasShownLoginToast = false; // Flag para evitar toasts duplicados
 
   constructor() {
     this.supabase = createClient(
@@ -28,6 +29,8 @@ export class AuthService {
     const { data: { session } } = await this.supabase.auth.getSession();
     if (session?.user) {
       this.saveUserToLocalStorage(session.user);
+      // Si ya hay sesión, marcar que ya se mostró el toast
+      this.hasShownLoginToast = true;
     }
     // Después de verificar la sesión inicial, marcamos que ya no es carga inicial
     setTimeout(() => {
@@ -44,11 +47,12 @@ export class AuthService {
         console.log('Usuario autenticado:', session.user.email);
         this.saveUserToLocalStorage(session.user);
         
-        // Solo mostrar toast si NO es la carga inicial
+        // Solo mostrar toast si NO es la carga inicial Y no se ha mostrado ya
         // Esto evita el toast al regresar a la página con sesión activa
-        if (!this.isInitialLoad) {
+        if (!this.isInitialLoad && !this.hasShownLoginToast) {
           const provider = session.user.app_metadata?.['provider'];
           if (provider === 'google' || provider === 'github') {
+            this.hasShownLoginToast = true;
             this.toastService.success('Login exitoso', 2000);
             // Redirigir al dashboard solo en login nuevo
             setTimeout(() => {
@@ -59,6 +63,7 @@ export class AuthService {
       } else if (event === 'SIGNED_OUT') {
         console.log('Sesión cerrada');
         localStorage.removeItem('usuario');
+        this.hasShownLoginToast = false; // Resetear el flag al cerrar sesión
       }
     });
   }
@@ -111,6 +116,8 @@ export class AuthService {
 
       if (error) throw error;
 
+      // Marcar que se mostró el toast para este login
+      this.hasShownLoginToast = true;
       this.toastService.success('Inicio sesión exitoso', 2000);
       
       if (data.user) {
@@ -143,6 +150,8 @@ export class AuthService {
   async loginWithGoogle(): Promise<void> {
     try {
       localStorage.removeItem('usuario');
+      // Resetear el flag antes de un nuevo login
+      this.hasShownLoginToast = false;
       
       const { error } = await this.supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -160,6 +169,8 @@ export class AuthService {
   async loginWithGitHub(): Promise<void> {
     try {
       localStorage.removeItem('usuario');
+      // Resetear el flag antes de un nuevo login
+      this.hasShownLoginToast = false;
       
       const { error } = await this.supabase.auth.signInWithOAuth({
         provider: 'github',
