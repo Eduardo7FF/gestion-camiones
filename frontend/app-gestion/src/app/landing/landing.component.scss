@@ -128,7 +128,8 @@
   .logo-header {
     display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: center;
+    line-height: 1;
   }
 
   .brand-name {
@@ -141,13 +142,6 @@
     span {
       font-weight: 600;
     }
-  }
-
-  .truck-icon {
-    width: 48px;
-    height: 48px;
-    stroke: #ffffff;
-    stroke-width: 1.5;
   }
 
   .badge {
@@ -510,42 +504,42 @@ form {
 
 .modal-content {
   background: white;
-  border-radius: 16px;
+  border-radius: 28px;
   width: 90%;
-  max-width: 440px;
+  max-width: 420px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   animation: slideUp 0.3s ease;
 }
 
 .modal-header {
-  padding: 24px 24px 16px;
+  padding: 22px 24px 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #e5e7eb;
 
   h3 {
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     font-weight: 500;
     color: #1a1a1a;
     margin: 0;
   }
 
   .btn-close-modal {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: transparent;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s;
 
     svg {
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       stroke: #6b7280;
     }
 
@@ -560,30 +554,36 @@ form {
 }
 
 .modal-body {
-  padding: 24px;
+  padding: 18px 24px;
 
   .modal-description {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     color: #6b7280;
-    margin: 0 0 20px 0;
+    margin: 0 0 14px 0;
     line-height: 1.5;
   }
 }
 
 .modal-footer {
-  padding: 16px 24px;
+  padding: 12px 24px 18px;
   border-top: 1px solid #e5e7eb;
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
+  gap: 10px;
+
+  .btn-secondary-modal,
+  .btn-primary {
+    padding: 10px 20px;
+    font-size: 0.875rem;
+    flex: 1;
+    max-width: 140px;
+  }
 
   .btn-secondary-modal {
-    padding: 10px 20px;
     background: #f3f4f6;
     border: none;
     border-radius: 8px;
     color: #374151;
-    font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
