@@ -17,6 +17,7 @@ export class LandingComponent implements OnInit {
   contrasena = '';
   modoRegistro = signal(false);
   mostrarContrasena = signal(false);
+  correoTocado = signal(false); // ← NUEVO: Para ocultar advertencia cuando escribe
   
   // Modales de recuperación
   modalRecuperacion = signal(false);
@@ -75,6 +76,7 @@ export class LandingComponent implements OnInit {
       this.modoRegistro.set(false);
       this.correo = '';
       this.contrasena = '';
+      this.correoTocado.set(false); // ← NUEVO: Resetear al registrarse exitosamente
     }
   }
 
@@ -82,6 +84,7 @@ export class LandingComponent implements OnInit {
     this.modoRegistro.set(!this.modoRegistro());
     this.correo = '';
     this.contrasena = '';
+    this.correoTocado.set(false); // ← NUEVO: Resetear al cambiar de modo
   }
 
   toggleMostrarContrasena() {

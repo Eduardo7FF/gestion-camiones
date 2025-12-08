@@ -55,9 +55,10 @@
               name="correo"
               placeholder="tu@correo.com"
               required
+              (focus)="correoTocado.set(true)"
             />
-            <span *ngIf="modoRegistro()" class="input-warning">
-              ⚠️ Usa un correo REAL para poder recuperar tu contraseña
+            <span *ngIf="modoRegistro() && !correoTocado()" class="input-warning">
+              ⚠️ Usa un correo válido para recuperar tu cuenta
             </span>
           </div>
 
