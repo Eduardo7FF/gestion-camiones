@@ -56,7 +56,7 @@ export class AuthService {
             this.toastService.success('Login exitoso', 2000);
             // Redirigir al dashboard solo en login nuevo
             setTimeout(() => {
-              this.router.navigate(['/dashboard']);
+              this.router.navigate(['/dashboard/home']);
             }, 2000);
           }
         }
@@ -125,7 +125,7 @@ export class AuthService {
       }
       
       setTimeout(() => {
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/dashboard/home']);
       }, 2000);
       
       return true;
@@ -156,7 +156,7 @@ export class AuthService {
       const { error } = await this.supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`
+          redirectTo: `${window.location.origin}/dashboard/home`
         }
       });
 
@@ -175,7 +175,7 @@ export class AuthService {
       const { error } = await this.supabase.auth.signInWithOAuth({
         provider: 'github',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`
+          redirectTo: `${window.location.origin}/dashboard/home`
         }
       });
 
@@ -191,7 +191,7 @@ export class AuthService {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`
+          emailRedirectTo: `${window.location.origin}/dashboard/home`
         }
       });
 
@@ -228,7 +228,7 @@ export class AuthService {
     await this.supabase.auth.signOut();
     localStorage.clear();
     this.toastService.info('Sesión cerrada', 2000);
-    this.router.navigate(['/']);
+    this.router.navigate(['/login']);
   }
 
   async getUser() {
@@ -244,7 +244,7 @@ export class AuthService {
   async resetPassword(email: string): Promise<boolean> {
     try {
       const { error } = await this.supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/`
+        redirectTo: `${window.location.origin}/login`
       });
 
       if (error) throw error;
@@ -268,7 +268,7 @@ export class AuthService {
       this.toastService.success('Contraseña actualizada exitosamente', 3000);
       
       setTimeout(() => {
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/dashboard/home']);
       }, 2000);
       
       return true;

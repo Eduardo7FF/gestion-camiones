@@ -1,7 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { ToastService } from '../toast/toast.service';
 
@@ -17,7 +17,7 @@ export class LandingComponent implements OnInit {
   contrasena = '';
   modoRegistro = signal(false);
   mostrarContrasena = signal(false);
-  correoTocado = signal(false); // ← NUEVO: Para ocultar advertencia cuando escribe
+  correoTocado = signal(false);
   
   // Modales de recuperación
   modalRecuperacion = signal(false);
@@ -29,14 +29,30 @@ export class LandingComponent implements OnInit {
   toastService = inject(ToastService); 
   private auth = inject(AuthService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   ngOnInit() {
+    // Detectar si la ruta es /register
+    this.router.events.subscribe(() => {
+      this.checkRoute();
+    });
+    this.checkRoute();
+
     // Detectar si viene del link de recuperación
     this.route.fragment.subscribe(fragment => {
       if (fragment && fragment.includes('type=recovery')) {
         this.modalNuevaContrasena.set(true);
       }
     });
+  }
+
+  private checkRoute() {
+    const url = this.router.url;
+    if (url.includes('/register')) {
+      this.modoRegistro.set(true);
+    } else {
+      this.modoRegistro.set(false);
+    }
   }
 
   async onLogin() {
@@ -73,18 +89,24 @@ export class LandingComponent implements OnInit {
 
     const success = await this.auth.register(this.correo, this.contrasena);
     if (success) {
-      this.modoRegistro.set(false);
+      // Después de registrarse exitosamente, ir a login
       this.correo = '';
       this.contrasena = '';
-      this.correoTocado.set(false); // ← NUEVO: Resetear al registrarse exitosamente
+      this.correoTocado.set(false);
+      this.router.navigate(['/login']);
     }
   }
 
   toggleModo() {
-    this.modoRegistro.set(!this.modoRegistro());
+    // Navegar a la ruta correspondiente
+    if (this.modoRegistro()) {
+      this.router.navigate(['/login']);
+    } else {
+      this.router.navigate(['/register']);
+    }
     this.correo = '';
     this.contrasena = '';
-    this.correoTocado.set(false); // ← NUEVO: Resetear al cambiar de modo
+    this.correoTocado.set(false);
   }
 
   toggleMostrarContrasena() {

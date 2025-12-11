@@ -1,10 +1,8 @@
 import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { AuthService } from '../auth.service';
-import { HomeComponent } from './views/home/home.component';
-import { VehiculosViewComponent } from './views/vehiculos-view/vehiculos-view.component';
-import { MapaViewComponent } from './views/mapa-view/mapa-view.component';
+import { filter } from 'rxjs/operators';
 
 type ViewType = 'home' | 'vehiculos' | 'mapa';
 
@@ -21,9 +19,7 @@ interface UserData {
   standalone: true,
   imports: [
     CommonModule,
-    HomeComponent,
-    VehiculosViewComponent,
-    MapaViewComponent
+    RouterOutlet  // Cambiado: ahora usamos RouterOutlet en lugar de importar componentes directamente
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
@@ -40,9 +36,9 @@ export class DashboardComponent implements OnInit {
   userMenuOpen = signal(false);
 
   menuItems = [
-    { id: 'home' as ViewType, label: 'Dashboard' },
-    { id: 'vehiculos' as ViewType, label: 'Vehículos' },
-    { id: 'mapa' as ViewType, label: 'Mapa' }
+    { id: 'home' as ViewType, label: 'Dashboard', route: '/dashboard/home' },
+    { id: 'vehiculos' as ViewType, label: 'Vehículos', route: '/dashboard/vehiculos' },
+    { id: 'mapa' as ViewType, label: 'Mapa', route: '/dashboard/mapa' }
   ];
 
   async ngOnInit() {
@@ -50,6 +46,28 @@ export class DashboardComponent implements OnInit {
     setTimeout(() => {
       this.loadUserInfo();
     }, 100);
+
+    // Detectar la ruta actual para sincronizar el estado
+    this.syncCurrentViewFromRoute();
+
+    // Suscribirse a cambios de navegación para mantener sincronizado el menu
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.syncCurrentViewFromRoute();
+      });
+  }
+
+  // Sincronizar currentView basado en la URL actual
+  private syncCurrentViewFromRoute() {
+    const url = this.router.url;
+    if (url.includes('/dashboard/vehiculos')) {
+      this.currentView.set('vehiculos');
+    } else if (url.includes('/dashboard/mapa')) {
+      this.currentView.set('mapa');
+    } else {
+      this.currentView.set('home');
+    }
   }
 
   async loadUserInfo() {
@@ -120,8 +138,12 @@ export class DashboardComponent implements OnInit {
     this.sidebarOpen.set(!this.sidebarOpen());
   }
 
+  // CAMBIADO: Ahora navegamos usando el router en lugar de cambiar solo el signal
   setView(view: ViewType) {
-    this.currentView.set(view);
+    const menuItem = this.menuItems.find(item => item.id === view);
+    if (menuItem) {
+      this.router.navigate([menuItem.route]);
+    }
   }
 
   toggleUserMenu() {

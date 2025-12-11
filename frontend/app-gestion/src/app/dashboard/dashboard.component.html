@@ -94,11 +94,9 @@
 
   </aside>
 
-  <!-- MAIN CONTENT -->
+  <!-- MAIN CONTENT - CAMBIADO: Ahora usa router-outlet -->
   <main class="main-content">
-    <app-home *ngIf="currentView() === 'home'"></app-home>
-    <app-vehiculos-view *ngIf="currentView() === 'vehiculos'"></app-vehiculos-view>
-    <app-mapa-view *ngIf="currentView() === 'mapa'"></app-mapa-view>
+    <router-outlet></router-outlet>
   </main>
 
 </div>
